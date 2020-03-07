@@ -1,7 +1,7 @@
 #ifndef ITHERMISTOR_HPP
 #define ITHERMISTOR_HPP
 
-#include "filter/Filter.hpp"
+#include "utilities/filter/Filter.hpp"
 
 using namespace FilterSpace;
 

@@ -1,7 +1,7 @@
 #ifndef ATMEGA328_SPI_HPP
 #define ATMEGA328_SPI_HPP
 
-#include "spi/SpiDriver.hpp"
+#include "drivers/spi/SpiDriver.hpp"
 
 namespace spi
 {

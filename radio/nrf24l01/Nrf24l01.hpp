@@ -1,7 +1,8 @@
 #ifndef NRF24L01_HPP
 #define NRF24L01_HPP
 
-#include "spi/SpiDriver.hpp"
+#include "drivers/radio/IRadio.hpp"
+#include "drivers/spi/SpiDriver.hpp"
 
 using namespace spi;
 
@@ -22,11 +23,36 @@ namespace radio
         PA_MAX
     };
 
-    class Nrf24l01
+    class Nrf24l01 : public IRadio
     {
         public:
             Nrf24l01(uint8_t cePin, SpiDriver* pSpi);
             ~Nrf24l01();
+
+            void enable() override;
+            void disable() override;
+
+            void startTransmitting(uint8_t listenerId) override;
+            void startReceiving(uint8_t listenerId) override;
+
+            /**
+             * Send data, MUST have called startTransmitting first
+             * @param   buffer      data to send
+             * @param   numBytes    number of bytes in transmit buffer
+             */
+            bool transmit(uint8_t* buff, uint8_t numBytes) override;
+
+            /**
+             * Return true if there is data to receive
+             */
+            bool isDataAvailable() override;
+
+            /**
+             * Receive data, MUST have called startReceiving first
+             * @param   buffer      buffer to put received data in
+             * @param   numBytes    number of bytes in receive buffer
+             */
+            bool receive(uint8_t* buff, uint8_t numBytes) override;
 
             /**
              * Set up radio with default settings
@@ -64,13 +90,6 @@ namespace radio
             void startTransmitting(char* address);
 
             /**
-             * Send data, MUST have called startTransmitting first
-             * @param   buffer      data to send
-             * @param   numBytes    number of bytes in transmit buffer
-             */
-            bool transmit(uint8_t* buffer, uint8_t numBytes);
-
-            /**
              * Empty transmit and receive buffers
              */
             void flush();
@@ -81,10 +100,6 @@ namespace radio
             void stop();
 
             bool startListening(uint8_t pipeIndex, char* address);
-
-            bool isAvailable();
-
-            bool read(uint8_t* buff, uint8_t numBytes);
 
             void stopListening();
 

@@ -1,7 +1,7 @@
 #ifndef PHOTO_TRANSISTOR_HPP
 #define PHOTO_TRANSISTOR_HPP
 
-#include "filter/filter.hpp"
+#include "utilities/filter/filter.hpp"
 
 using namespace FilterSpace;
 

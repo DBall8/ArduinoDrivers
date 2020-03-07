@@ -104,9 +104,20 @@ namespace radio
 
     }
 
-    void Nrf24l01::initialize()
+    void Nrf24l01::enable()
     {
         pSpi_->enable();
+    }
+
+    void Nrf24l01::disable()
+    {
+        stop();
+        pSpi_->disable();
+    }
+
+    void Nrf24l01::initialize()
+    {
+        enable();
 
         // Wait for settling time
         delay(150);
@@ -134,6 +145,21 @@ namespace radio
         setChannel(DEFAULT_CHANNEL);
 
         delay(2);
+    }
+
+    void Nrf24l01::startTransmitting(uint8_t listenerId)
+    {
+        char address[ADDRESS_LEN+1] = "00001";
+        //address[ADDRESS_LEN-1] = (char)listenerId;
+        startTransmitting(address);
+    }
+
+    void Nrf24l01::startReceiving(uint8_t listenerId)
+    {
+        uint8_t pipeNum = listenerId % NUM_RX_PIPES;
+        char address[ADDRESS_LEN+1] = "00000";
+        address[ADDRESS_LEN-1] = (char)listenerId;
+        startListening(pipeNum, address);
     }
 
     void Nrf24l01::setPaLevel(PaLevel paLevel)
@@ -328,7 +354,7 @@ namespace radio
         powerUp(true);
     }
 
-    bool Nrf24l01::transmit(uint8_t* buffer, uint8_t numBytes)
+    bool Nrf24l01::transmit(uint8_t* buff, uint8_t numBytes)
     {
         pSpi_->selectSlave();
 
@@ -338,7 +364,7 @@ namespace radio
         // Transmit data
         for (uint8_t i=0; i<numBytes; i++)
         {
-            pSpi_->transfer(buffer[i], SPI_DELAY_MICRO_S);
+            pSpi_->transfer(buff[i], SPI_DELAY_MICRO_S);
         }
 
         // Send 0s to fill out rest of transmission size
@@ -406,7 +432,7 @@ namespace radio
         return true;
     }
 
-    bool Nrf24l01::isAvailable()
+    bool Nrf24l01::isDataAvailable()
     {
         uint8_t status = readRegister(STATUS);
         bool dataAvailable = status & (1 << RX_DR);
@@ -424,7 +450,7 @@ namespace radio
         return dataAvailable;
     }
 
-    bool Nrf24l01::read(uint8_t* buff, uint8_t numBytes)
+    bool Nrf24l01::receive(uint8_t* buff, uint8_t numBytes)
     { 
         uint8_t data[MAX_TRANSMISSION_SIZE];
         pSpi_->selectSlave();

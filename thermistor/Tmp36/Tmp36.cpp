@@ -1,5 +1,5 @@
 #include "Tmp36.hpp"
-#include "Conversions.hpp"
+#include "utilities/Conversions.hpp"
 
 const static float V_TO_C_OFFSET = -0.5f;
 const static float V_TO_C_MULTIPLIER = 100.0f;

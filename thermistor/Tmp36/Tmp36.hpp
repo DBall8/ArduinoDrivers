@@ -1,7 +1,7 @@
 #ifndef TMP36
 #define TMP36
 
-#include "thermistor/IThermistor.hpp"
+#include "drivers/thermistor/IThermistor.hpp"
 
 namespace ThermistorSpace{
 
