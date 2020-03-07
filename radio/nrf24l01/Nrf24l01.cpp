@@ -97,6 +97,8 @@ namespace radio
     {
         pinMode(cePin_, OUTPUT);
         digitalWrite(cePin_, LOW);
+
+        initialize();
     }
 
     Nrf24l01::~Nrf24l01()
@@ -149,8 +151,8 @@ namespace radio
 
     void Nrf24l01::startTransmitting(uint8_t listenerId)
     {
-        char address[ADDRESS_LEN+1] = "00001";
-        //address[ADDRESS_LEN-1] = (char)listenerId;
+        char address[ADDRESS_LEN+1] = "00000";
+        address[ADDRESS_LEN-1] = (char)listenerId;
         startTransmitting(address);
     }
 
