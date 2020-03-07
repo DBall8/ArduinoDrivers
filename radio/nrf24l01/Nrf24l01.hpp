@@ -37,8 +37,8 @@ namespace radio
             void enable() override;
             void disable() override;
 
-            void startTransmitting(uint8_t listenerId) override;
-            void startReceiving(uint8_t listenerId) override;
+            bool startTransmitting(uint8_t listenerId) override;
+            bool startReceiving(uint8_t listenerId) override;
 
             /**
              * Send data, MUST have called startTransmitting first

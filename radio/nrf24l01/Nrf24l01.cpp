@@ -148,23 +148,27 @@ namespace radio
         delay(2);
     }
 
-    void Nrf24l01::startTransmitting(uint8_t listenerId)
+    bool Nrf24l01::startTransmitting(uint8_t listenerId)
     {
         if (!isInitialized_) initialize();
 
         char address[ADDRESS_LEN+1] = "00000";
         address[ADDRESS_LEN-1] = (char)listenerId;
         startTransmitting(address);
+
+        return true;
     }
 
-    void Nrf24l01::startReceiving(uint8_t listenerId)
+    bool Nrf24l01::startReceiving(uint8_t listenerId)
     {
         if (!isInitialized_) initialize();
-        
+
         uint8_t pipeNum = listenerId % NUM_RX_PIPES;
         char address[ADDRESS_LEN+1] = "00000";
         address[ADDRESS_LEN-1] = (char)listenerId;
         startListening(pipeNum, address);
+
+        return true;
     }
 
     void Nrf24l01::setPaLevel(PaLevel paLevel)
