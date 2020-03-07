@@ -93,12 +93,11 @@ namespace radio
 {
     Nrf24l01::Nrf24l01(uint8_t cePin, SpiDriver* pSpi):
         cePin_(cePin),
-        pSpi_(pSpi)
+        pSpi_(pSpi),
+        isInitialized_(false)
     {
         pinMode(cePin_, OUTPUT);
         digitalWrite(cePin_, LOW);
-
-        initialize();
     }
 
     Nrf24l01::~Nrf24l01()
@@ -151,6 +150,8 @@ namespace radio
 
     void Nrf24l01::startTransmitting(uint8_t listenerId)
     {
+        if (!isInitialized_) initialize();
+
         char address[ADDRESS_LEN+1] = "00000";
         address[ADDRESS_LEN-1] = (char)listenerId;
         startTransmitting(address);
@@ -158,6 +159,8 @@ namespace radio
 
     void Nrf24l01::startReceiving(uint8_t listenerId)
     {
+        if (!isInitialized_) initialize();
+        
         uint8_t pipeNum = listenerId % NUM_RX_PIPES;
         char address[ADDRESS_LEN+1] = "00000";
         address[ADDRESS_LEN-1] = (char)listenerId;

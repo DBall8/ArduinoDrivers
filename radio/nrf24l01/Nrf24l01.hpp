@@ -29,6 +29,11 @@ namespace radio
             Nrf24l01(uint8_t cePin, SpiDriver* pSpi);
             ~Nrf24l01();
 
+            /**
+             * Set up radio with default settings, must be done first
+             */
+            void initialize();
+
             void enable() override;
             void disable() override;
 
@@ -53,11 +58,6 @@ namespace radio
              * @param   numBytes    number of bytes in receive buffer
              */
             bool receive(uint8_t* buff, uint8_t numBytes) override;
-
-            /**
-             * Set up radio with default settings
-             */
-            void initialize();
 
             /**
              * Set PA level, higher level has higher range at the cost of higher energy consumption
@@ -106,6 +106,8 @@ namespace radio
         private:
             uint8_t cePin_;
             SpiDriver* pSpi_;
+
+            bool isInitialized_;
 
             /**
              * Write a single value to a register
