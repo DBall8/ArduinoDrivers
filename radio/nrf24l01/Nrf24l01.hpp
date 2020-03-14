@@ -40,6 +40,8 @@ namespace radio
             bool startTransmitting(uint8_t listenerId) override;
             bool startReceiving(uint8_t listenerId) override;
 
+            void setPayloadSize(uint8_t size) { payloadSize_ = size; }
+
             /**
              * Send data, MUST have called startTransmitting first
              * @param   buffer      data to send
@@ -106,6 +108,7 @@ namespace radio
         private:
             uint8_t cePin_;
             SpiDriver* pSpi_;
+            uint8_t payloadSize_;
 
             bool isInitialized_;
 

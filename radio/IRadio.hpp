@@ -11,6 +11,8 @@ namespace radio
             virtual void enable() = 0;
             virtual void disable() = 0;
 
+            virtual void setPayloadSize(uint8_t size);
+
             virtual bool startTransmitting(uint8_t listenerId){};
             virtual bool startReceiving(uint8_t listenerId){};
 

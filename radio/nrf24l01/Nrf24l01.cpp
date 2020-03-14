@@ -94,7 +94,8 @@ namespace radio
     Nrf24l01::Nrf24l01(uint8_t cePin, SpiDriver* pSpi):
         cePin_(cePin),
         pSpi_(pSpi),
-        isInitialized_(false)
+        isInitialized_(false),
+        payloadSize_(MAX_TRANSMISSION_SIZE)
     {
         pinMode(cePin_, OUTPUT);
         digitalWrite(cePin_, LOW);
@@ -353,7 +354,7 @@ namespace radio
     {
         // Set address for RX pipe 0 for getting ACKs
         writeRegister(RX_ADDR_P0, (uint8_t*)address, ADDRESS_LEN);
-        writeRegister(RX_PW_P0, MAX_TRANSMISSION_SIZE);
+        writeRegister(RX_PW_P0, payloadSize_);
 
         // Set address to transmit on
         writeRegister(TX_ADDR, (uint8_t*)address, ADDRESS_LEN);
@@ -377,7 +378,7 @@ namespace radio
         }
 
         // Send 0s to fill out rest of transmission size
-        for (uint8_t i=numBytes; i<MAX_TRANSMISSION_SIZE; i++)
+        for (uint8_t i=numBytes; i<payloadSize_; i++)
         {
             pSpi_->transfer(0, SPI_DELAY_MICRO_S);
         }
@@ -426,7 +427,7 @@ namespace radio
         if (pipeIndex >= NUM_RX_PIPES) return false;
 
         writeRegister(RX_ADDRESSES[pipeIndex], (uint8_t*)address, ADDRESS_LEN);
-        writeRegister(RX_PW_WIDTHS[pipeIndex], MAX_TRANSMISSION_SIZE);
+        writeRegister(RX_PW_WIDTHS[pipeIndex], payloadSize_);
 
         writeRegister(EN_RXADDR, readRegister(EN_RXADDR) | (1 << pipeIndex));
 
@@ -461,10 +462,10 @@ namespace radio
 
     bool Nrf24l01::receive(uint8_t* buff, uint8_t numBytes)
     { 
-        uint8_t data[MAX_TRANSMISSION_SIZE];
+        uint8_t data[payloadSize_];
         pSpi_->selectSlave();
         pSpi_->transfer(R_RX_PAYLOAD, SPI_DELAY_MICRO_S);
-        pSpi_->read(data, MAX_TRANSMISSION_SIZE, SPI_DELAY_MICRO_S);
+        pSpi_->read(data, payloadSize_, SPI_DELAY_MICRO_S);
         pSpi_->releaseSlave();
 
         for (uint8_t i=0; i<numBytes; i++)
