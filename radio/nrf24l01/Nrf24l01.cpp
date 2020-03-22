@@ -94,8 +94,8 @@ namespace radio
     Nrf24l01::Nrf24l01(uint8_t cePin, SpiDriver* pSpi):
         cePin_(cePin),
         pSpi_(pSpi),
-        isInitialized_(false),
-        payloadSize_(MAX_TRANSMISSION_SIZE)
+        payloadSize_(MAX_TRANSMISSION_SIZE),
+        isInitialized_(false)
     {
         pinMode(cePin_, OUTPUT);
         digitalWrite(cePin_, LOW);
@@ -354,10 +354,12 @@ namespace radio
     {
         // Set address for RX pipe 0 for getting ACKs
         writeRegister(RX_ADDR_P0, (uint8_t*)address, ADDRESS_LEN);
-        writeRegister(RX_PW_P0, payloadSize_);
 
         // Set address to transmit on
         writeRegister(TX_ADDR, (uint8_t*)address, ADDRESS_LEN);
+
+        // Write size for ACK
+        writeRegister(RX_PW_P0, payloadSize_);
 
         flush();
 
