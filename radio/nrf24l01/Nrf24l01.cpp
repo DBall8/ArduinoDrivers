@@ -20,7 +20,7 @@ const static uint8_t TX_ADDR = 0x10;    // Register to write transmit address to
 const static uint8_t RX_ADDR_P0 = 0x0a; // Address for pipe 0
 const static uint8_t RX_PW_P0 = 0x11;   // Payload size for pipe 0
 const static uint8_t DYNPD = 0x1C;      // Enable dynamic payload lengths
-const static uint8_t FEATURE = 0x1D     // Enable Ack types
+const static uint8_t FEATURE = 0x1D;    // Enable Ack types
 
 // Commands
 const static uint8_t WRITE_MASK = 0x20;
