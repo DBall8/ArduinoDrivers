@@ -20,6 +20,7 @@ const static uint8_t TX_ADDR = 0x10;    // Register to write transmit address to
 const static uint8_t RX_ADDR_P0 = 0x0a; // Address for pipe 0
 const static uint8_t RX_PW_P0 = 0x11;   // Payload size for pipe 0
 const static uint8_t DYNPD = 0x1C;      // Enable dynamic payload lengths
+const static uint8_t FEATURE = 0x1D     // Enable Ack types
 
 // Commands
 const static uint8_t WRITE_MASK = 0x20;
@@ -137,10 +138,11 @@ namespace radio
         // Set setup
         setPaLevel(PA_LOW);
         setDataSpeed(RF_1_MBPS);
-        setupRetries(3, 1);
+        setupRetries(15, 5);
 
         // Disable dynamic payload length
         writeRegister(DYNPD, 0);
+        writeRegister(FEATURE, 0);
 
         clearStatusReg();
 
@@ -226,15 +228,12 @@ namespace radio
     void Nrf24l01::setupRetries(uint8_t numRetries, uint8_t retransmitDelayMultiplier)
     {
         const static uint8_t MAX_RETRIES = 15u;
-        const static uint16_t MAX_DELAY = 4000u;
-        const static uint8_t DELAY_BASE_MICRO_S = 250u;
+        const static uint16_t MAX_DELAY = 15u;
         
         if (numRetries > MAX_RETRIES) numRetries = MAX_RETRIES;
+        if (retransmitDelayMultiplier > MAX_DELAY) retransmitDelayMultiplier = MAX_DELAY;
 
-        uint16_t delay = DELAY_BASE_MICRO_S * retransmitDelayMultiplier;
-        if (delay > MAX_DELAY) delay = MAX_DELAY;
-
-        uint8_t retryReg = 0x00 | (delay << ARD) | (numRetries << ARC);
+        uint8_t retryReg = 0x00 | (retransmitDelayMultiplier << ARD) | (numRetries << ARC);
 
         writeRegister(SETUP_RETR, retryReg);
     }
