@@ -1,3 +1,6 @@
+/**
+ * Interface for Analog to Digital converter drivers
+ */
 #ifndef IADC_HPP
 #define IADC_HPP
 

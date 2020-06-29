@@ -10,6 +10,7 @@ namespace adc
         // Disable digital IO for this channel
         DIDR0 |= (0x01 << channel);
 
+        // Set the prescaler bits
         ADCSRA |= prescaler;
     }
 
@@ -37,6 +38,7 @@ namespace adc
             // Wait for ADC conversion to complete
         }
  
+        // MUST read ADCL first
         uint8_t lowByte = ADCL;
         uint8_t highByte = ADCH;
 
@@ -50,6 +52,7 @@ namespace adc
 
     void Atmega328Adc::selectChannel()
     {
+        // Keep reference bits in ADMUX intact
         ADMUX = (reference_ << REFS0) | channel_;
     }
 }

@@ -1,3 +1,6 @@
+/**
+ * Driver for the Atmega328 analog to digital converter
+ */
 #ifndef ATMEGA328_ADC_HPP
 #define ATMEGA328_ADC_HPP
 
@@ -40,17 +43,41 @@ namespace adc
     class Atmega328Adc: public IAdc
     {
         public:
+            /**
+             * Constructor
+             * 
+             * @param   channel     The adc channel to use, A0 through A7
+             * @param   prescaler   Prescaler to divide the input clock by, requires between 200 and 50 kHz
+             * @param   reference   The reference to use for measurements, AREF, AVcc, or internal 1.1v
+             */
             Atmega328Adc(Atmega328Channel channel, Prescaler prescaler, Reference reference);
             ~Atmega328Adc(){}
 
+            /**
+             * Enables the ADC (all channels)
+             */
             void enable() override;
+
+            /**
+             * Disables the ADC (all channels)
+             */
             void disable() override;
+
+            /**
+             * Reads from the ADC channel with 10 bit resolution
+             * 
+             * @param   value   Value to store the channel reading to
+             * @return  True if read was successful
+             */
             bool read(uint16_t& value) override;
 
         private:
             Atmega328Channel channel_;
             Reference reference_;
 
+            /**
+             * Selects the channel to read from
+             */
             void selectChannel();
     };
 }
