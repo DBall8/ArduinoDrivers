@@ -1,11 +1,9 @@
 #include "Atmega328Uart.hpp"
 #include "drivers/assert/Assert.hpp"
-#include <Arduino.h>
+#include <avr/io.h>
 
 namespace uart
 {
-    const static long SYS_CLOCK = static_cast<long>(16000000);
-
     const static uint32_t baudRates[] =
     {
         [BaudRate::BAUD_9600] = 9600,
@@ -15,10 +13,11 @@ namespace uart
     const uint32_t BAUD_DIVISOR = 16;
     const uint32_t DOUBLE_BAUD_DIVISOR = 8;
 
-    Atmega328Uart::Atmega328Uart(BaudRate baudRate, bool enableParity, bool polarity):
-        polarity_(polarity),
+    Atmega328Uart::Atmega328Uart(BaudRate baudRate, uint32_t fCpu, bool enableParity, bool polarity):
+        baudRate_(baudRate),
+        fCpu_(fCpu),
         enableParity_(enableParity),
-        baudRate_(baudRate)
+        polarity_(polarity)
     {
     }
 
@@ -27,7 +26,7 @@ namespace uart
 
     void Atmega328Uart::initialize()
     {
-        setBaudRate(baudRate_);
+        setBaudRate(baudRate_, fCpu_);
 
         // Control register values
         uint8_t ucsrb = 0x00;
@@ -45,9 +44,9 @@ namespace uart
         UCSR0C = ucsrc;
     }
 
-    void Atmega328Uart::write(uint8_t* buff, uint8_t numBytes)
+    void Atmega328Uart::write(uint8_t* buff, uint16_t numBytes)
     {
-        for (uint8_t i=0; i<numBytes; i++)
+        for (uint16_t i=0; i<numBytes; i++)
         {
             // Wait until data register is empty (no reading or writing in progress)
             while(!(UCSR0A & (1 << UDRE0))){}
@@ -56,37 +55,39 @@ namespace uart
         }
     }
 
-    void Atmega328Uart::read(uint8_t* buff, uint8_t numBytes)
+    uint16_t Atmega328Uart::read(uint8_t* buff, uint16_t numBytes)
     {
-        for (uint8_t i=0; i<numBytes; i++)
+        for (uint16_t i=0; i<numBytes; i++)
         {
             // Wait until the Read Complete flag is set
             while(!(UCSR0A & (1 << RXC0))){}
 
             buff[i] = UDR0;
         }
+
+        return numBytes;
     }
 
-    void Atmega328Uart::setBaudRate(BaudRate baudRate)
+    void Atmega328Uart::setBaudRate(BaudRate baudRate, uint32_t fCpu)
     {
         assert(baudRate < BaudRate::NUM_BAUD_RATES);
 
         uint32_t baud = baudRates[static_cast<uint8_t>(baudRate)];
-        uint32_t ubrr;
+        uint32_t ubrr = 0;
         uint8_t ucsra = 0x00;
 
         switch (baudRate)
         {
-            case BAUD_9600:
+            case BAUD_115200:
             {
                 // Use double speed (divisor of 8)
                 ucsra |= (1 << U2X0); // Double speed bit
-                ubrr = (SYS_CLOCK / (DOUBLE_BAUD_DIVISOR * baud)) - 1;
+                ubrr = (fCpu / (DOUBLE_BAUD_DIVISOR * baud)) - 1;
                 break;
             }
             default:
             {
-                ubrr = (SYS_CLOCK / (BAUD_DIVISOR * baud)) - 1;
+                ubrr = (fCpu / (BAUD_DIVISOR * baud)) - 1;
                 break;
             }
         }

@@ -1,6 +1,9 @@
 #include "Nrf24l01.hpp"
-#include <Arduino.h>
-#include <SPI.h>
+#include "drivers/timer/Delay.hpp"
+#include "utilities/print/Print.hpp"
+
+using namespace spi;
+using namespace dio;
 
 // Defined settings
 const static uint8_t ADDRESS_LEN = 5u;
@@ -92,14 +95,12 @@ enum ERX_BITS: uint8_t
 const static uint32_t SPI_DELAY_MICRO_S = 10; 
 namespace radio
 {
-    Nrf24l01::Nrf24l01(uint8_t cePin, SpiDriver* pSpi):
-        cePin_(cePin),
+    Nrf24l01::Nrf24l01(IDio* pCePin, SpiDriver* pSpi):
+        pCePin_(pCePin),
         pSpi_(pSpi),
         payloadSize_(MAX_TRANSMISSION_SIZE),
         isInitialized_(false)
     {
-        pinMode(cePin_, OUTPUT);
-        digitalWrite(cePin_, LOW);
     }
 
     Nrf24l01::~Nrf24l01()
@@ -123,7 +124,7 @@ namespace radio
         enable();
 
         // Wait for settling time
-        delay(150);
+        DELAY(150);
 
         // Set config
         uint8_t config = 0x00 | 
@@ -148,7 +149,7 @@ namespace radio
 
         setChannel(DEFAULT_CHANNEL);
 
-        delay(2);
+        DELAY(2);
     }
 
     bool Nrf24l01::startTransmitting(uint8_t listenerId)
@@ -328,7 +329,7 @@ namespace radio
         writeRegister(CONFIG_REG, config);
 
         // Give time for the radio to enter standby mode
-        delayMicroseconds(150);
+        DELAY_MICROSECONDS(150);
     }
 
     void Nrf24l01::stop()
@@ -387,9 +388,9 @@ namespace radio
         pSpi_->releaseSlave();
 
         // Pulse CE high to start transmission
-        digitalWrite(cePin_, HIGH);
-        delayMicroseconds(150);
-        digitalWrite(cePin_, LOW);
+        pCePin_->set(L_HIGH);
+        DELAY_MICROSECONDS(150);
+         pCePin_->set(L_LOW);
 
         uint8_t completionMask = (1 << TX_DS) | (1 << MAX_RT);
 
@@ -406,15 +407,15 @@ namespace radio
 #ifdef DEBUG_RADIO
         if (status & (1 << TX_DS))
         {
-            Serial.println("Transmission successful!");
+            PRINTLN("Transmission successful!");
         }
         else if (status & (1 << MAX_RT))
         {
-            Serial.println("Transmission failed: max retries used");
+            PRINTLN("Transmission failed: max retries used");
         }
         else
         {
-            Serial.println("Transmission failed: unknown reason");
+            PRINTLN("Transmission failed: unknown reason");
         }
 #endif
 
@@ -436,9 +437,9 @@ namespace radio
 
         flush();
 
-        digitalWrite(cePin_, HIGH);
+         pCePin_->set(L_HIGH);
 
-        delayMicroseconds(150);
+        DELAY_MICROSECONDS(150);
 
         return true;
     }
@@ -479,6 +480,6 @@ namespace radio
 
     void Nrf24l01::stopListening()
     {
-        digitalWrite(cePin_, LOW);
+         pCePin_->set(L_LOW);
     }
 }

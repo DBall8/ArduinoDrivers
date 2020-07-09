@@ -2,13 +2,14 @@
 
 namespace ticCounter{
 
-    TicCounter::TicCounter():
-        ticCount_(0)
+    TicCounter::TicCounter(uint32_t ticsPerSecond):
+        ticCount_(0),
+        ticsPerSecond_(ticsPerSecond)
     {}
      
     TicCounter::~TicCounter(){}
 
-    uint32_t TicCounter::getTicCount(){
+    volatile uint32_t TicCounter::getTicCount(){
         return ticCount_;
     }
 

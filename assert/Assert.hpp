@@ -1,21 +1,21 @@
 #ifndef ASSERT_HPP
 #define ASSERT_HPP
 
-#include <Arduino.h>
+#include "utilities/print/Print.hpp"
 
 static void assert(bool val, const char* text = nullptr)
 {
 
     if (val) return;
 
-    Serial.print("Assert failed");
+    PRINT("Assert failed");
     if (text != nullptr)
     {
-        Serial.print(": ");
-        Serial.print(text);
+        PRINT(": ");
+        PRINT(text);
     }
 
-    Serial.println(".");
+    PRINTLN(".");
 
     while(1)
     {

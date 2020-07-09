@@ -26,7 +26,7 @@ namespace adc
         ADCSRA &= ~(0x01 << ADEN);
     }
 
-    bool Atmega328Adc::read(uint16_t& value)
+    uint16_t Atmega328Adc::read(bool* success)
     {
         selectChannel();
 
@@ -42,12 +42,14 @@ namespace adc
         uint8_t lowByte = ADCL;
         uint8_t highByte = ADCH;
 
-        value = (highByte * 0x100) + lowByte;
+        uint16_t value = (highByte * 0x100) + lowByte;
 
         // Write to the complete flag to reset it
         ADCSRA |= (0x01 << ADIF);
 
-        return true;
+        if (success != nullptr) *success = true;
+
+        return value;
     }
 
     void Atmega328Adc::selectChannel()

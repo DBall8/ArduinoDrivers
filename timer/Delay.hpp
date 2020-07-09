@@ -1,0 +1,32 @@
+#ifndef DELAY_HPP
+#define DELAY_HPP
+
+#include "TicCounter.hpp"
+
+#define DELAY(x) Delay::delay(x)
+#define DELAY_MICROSECONDS(x) Delay::delayMicroseconds(x)
+
+class Delay
+{
+    public:
+
+        /**
+         * Initialize the delay function with a pointer to a tic counter
+         * 
+         * @param   pTicCounter Pointer to a tic counter to use for delaying
+         */
+        static void Initialize(ticCounter::TicCounter* pTicCounter);
+
+        /**
+         * Pause for some time
+         * 
+         * @param   milliseconds    Delay duration in milliseconds
+         */
+        static void delay(uint32_t milliseconds);
+        static void delayMicroseconds(uint32_t microseconds);
+
+    private:
+        static ticCounter::TicCounter* pTicCounter_;
+};
+
+#endif

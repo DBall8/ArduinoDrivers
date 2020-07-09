@@ -3,8 +3,7 @@
 
 #include "drivers/radio/IRadio.hpp"
 #include "drivers/spi/SpiDriver.hpp"
-
-using namespace spi;
+#include "drivers/dio/IDio.hpp"
 
 namespace radio
 {
@@ -26,7 +25,7 @@ namespace radio
     class Nrf24l01 : public IRadio
     {
         public:
-            Nrf24l01(uint8_t cePin, SpiDriver* pSpi);
+            Nrf24l01(dio::IDio* pCePin, spi::SpiDriver* pSpi);
             ~Nrf24l01();
 
             /**
@@ -106,8 +105,8 @@ namespace radio
             void stopListening();
 
         private:
-            uint8_t cePin_;
-            SpiDriver* pSpi_;
+            dio::IDio* pCePin_;
+            spi::SpiDriver* pSpi_;
             uint8_t payloadSize_;
 
             bool isInitialized_;

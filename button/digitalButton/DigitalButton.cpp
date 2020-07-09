@@ -1,12 +1,12 @@
 #include "DigitalButton.hpp"
 
-#include <Arduino.h>
+using namespace dio;
 
 namespace button
 {
-    DigitalButton::DigitalButton(uint8_t digitalPin)
+    DigitalButton::DigitalButton(IDio* pDio)
     {
-        digitalPin_ = digitalPin;
+        pDio_ = pDio;
         currentState_ = ButtonState::INVALID;
         prevState_ = ButtonState::INVALID;
     }
@@ -17,8 +17,8 @@ namespace button
     {
         prevState_ = currentState_;
 
-        uint8_t reading = digitalRead(digitalPin_);
-        currentState_ = (reading == HIGH) ?
+        Level reading = pDio_->read();
+        currentState_ = (reading == Level::L_HIGH) ?
                         ButtonState::PRESSED :
                         ButtonState::NOT_PRESSED;
     }

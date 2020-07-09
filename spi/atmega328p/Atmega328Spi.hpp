@@ -2,6 +2,7 @@
 #define ATMEGA328_SPI_HPP
 
 #include "drivers/spi/SpiDriver.hpp"
+#include "drivers/dio/IDio.hpp"
 
 namespace spi
 {
@@ -24,10 +25,7 @@ namespace spi
             static uint8_t GetByte();
 
             // Construct as Master
-            Atmega328Spi(uint8_t mosi,
-                         uint8_t miso,
-                         uint8_t clock,
-                         uint8_t slaveSelect,
+            Atmega328Spi(dio::IDio* pSlaveSelect,
                          bool isMaster,
                          SpiClock clockSpeed = CLOCK_DIV_4,
                          SpiPolarity polarity = IDLE_LOW,
@@ -56,20 +54,20 @@ namespace spi
 
             bool writeCollisionOccurred();
 
-            void setSlaveInterruptCallback(uint8_t slaveSelect, void (*receiveHandler)(uint8_t));
+            void setSlaveInterruptCallback(dio::IDio* pSlaveSelect, void (*receiveHandler)(uint8_t));
 
             void selectSlave() override;
             void releaseSlave() override;
 
         private:
-            uint8_t slaveSelect_;
+            dio::IDio* pSlaveSelect_;
             bool isMaster_;
 
             bool writeComplete();
             void setSpiClockSpeed(SpiClock clockSpeed);;
     };
 
-    static uint8_t SlaveSelect = 0;
+    static dio::IDio* pIntSlaveSelect = nullptr;
     static void (*SlaveReceiveHandler)(uint8_t) = nullptr;
 }
 

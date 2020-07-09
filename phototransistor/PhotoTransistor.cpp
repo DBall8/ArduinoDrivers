@@ -1,17 +1,23 @@
 #include "PhotoTransistor.hpp"
-#include <Arduino.h>
+
+using namespace adc;
+using namespace filter;
 
 namespace photoTransistor{
 
     const float MAX_ADC = 1023.0f;
 
-    PhotoTransistor::PhotoTransistor(int pin, Filter* pFilter):
-        pin_(pin),
+    PhotoTransistor::PhotoTransistor(IAdc* pAdc, Filter* pFilter):
+        pAdc_(pAdc),
         pFilter_(pFilter)
     {}
 
     void PhotoTransistor::update(){
-        pFilter_->addSample(analogRead(pin_));
+        bool success;
+        uint16_t reading = pAdc_->read(&success);
+        if (!success) return;
+
+        pFilter_->addSample((int)reading);
     }
 
     float PhotoTransistor::getLightPercent(){

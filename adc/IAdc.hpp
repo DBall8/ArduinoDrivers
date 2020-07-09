@@ -13,7 +13,7 @@ namespace adc
         public:
             virtual void enable();
             virtual void disable();
-            virtual bool read(uint16_t& value) = 0;
+            virtual uint16_t read(bool* success = nullptr) = 0;
     };
 }
 

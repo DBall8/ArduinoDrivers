@@ -3,32 +3,84 @@
 
 #include "drivers/uart/atmega328Uart/Atmega328Uart.hpp"
 #include "utilities/circular_queue/CircularQueue.hpp"
+#include "drivers/interrupt/IInterrupt.hpp"
 
 namespace uart
 {
     class Atmega328AsynchUart : public Atmega328Uart
     {
         public:
+            /**
+             * Constructor
+             * @param   txBuffer            Pointer to buffer to store outgoing data in
+             * @param   rxBuffer            Pointer to buffer to store incoming data in
+             * @param   txLength            Length of txBuffer
+             * @param   rxLength            Length of rxBuffer
+             * @param   baudRate            UART transmission rate to use
+             * @param   pInterruptControl   Pointer to global interrupt controller
+             * @param   enableParity        Enable parity
+             * @param   polarity            Set polarity
+             */
             Atmega328AsynchUart(uint8_t* txBuffer, 
                                 uint8_t* rxBuffer, 
-                                uint8_t bufferSize, 
-                                BaudRate baudRate, 
+                                uint16_t txLength,
+                                uint16_t rxLength, 
+                                BaudRate baudRate,
+                                uint32_t fCpu,
+                                interrupt::IInterrupt* pInterruptControl,
                                 bool enableParity = false, 
                                 bool polarity = false);
             ~Atmega328AsynchUart();
 
+            /**
+             * Set up uart, must be done after static initializtion
+             */
             void initialize() override;
 
-            // Blocking write
-            virtual void write(uint8_t* buff, uint8_t numBytes) override;
+            /**
+             * Returns true if there is incoming data to read
+             */
+            bool isDataAvailable() override;
 
-            // Blocking read
-            virtual void read(uint8_t* buff, uint8_t numBytes) override;
+            /**
+             * Non blocking write, puts data in a buffer to be written out
+             * 
+             * @param   buff        Buffer containing new data to write
+             * @param   numBytes    Number of bytes in buff
+             */
+            virtual void write(uint8_t* buff, uint16_t numBytes) override;
+
+            /**
+             * Non-blocking read, retrieves any data read and buffered from the uart
+             * 
+             * @param   buff        Buffer to put read bytes in
+             * @param   numBytes    Size of buff, maximum number of bytes to read
+             * @return  Returns the number of bytes read, up to numBytes
+             */
+            virtual uint16_t read(uint8_t* buff, uint16_t numBytes) override;
+
+            /**
+             * Callback for the Data Register Empty interrupt
+             */
+            static void HanleDataRegisterEmpty();
+
+            /**
+             * Callback for the Data read complete interrupt
+             */
+            static void HanleRxDataAvailable();
 
         private:
-            uint8_t size_;
-            CircularQueue<uint8_t> txBuffer_;
-            CircularQueue<uint8_t> rxBuffer_;
+
+            // Static copies for use in interrupt handling
+            static CircularQueue<uint8_t>* pTxBuffer_;
+            static CircularQueue<uint8_t>* pRxBuffer_;
+            static interrupt::IInterrupt* pInterruptControl_;
+
+            CircularQueue<uint8_t> txBuffer_;   // Stores outgoing bytes
+            CircularQueue<uint8_t> rxBuffer_;   // Stores incoming bytes
+            uint16_t txLength_; // Length of txBuffer_
+            uint16_t rxLength_; // Length of rxBuffer_
+            bool txBufferFull_; // True when the TX buffer has overfilled and must be emptied
     };
 }
 

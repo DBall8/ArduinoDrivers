@@ -1,14 +1,14 @@
 #include "ButtonChannel.hpp"
-
 #include "drivers/assert/Assert.hpp"
-#include <Arduino.h>
+
+using namespace adc;
 
 namespace button
 {
-    ButtonChannel::ButtonChannel(uint8_t adcChannel, AnalogButton** buttonArray, uint8_t numButtons):
+    ButtonChannel::ButtonChannel(IAdc* pAdc, AnalogButton** buttonArray, uint8_t numButtons):
         buttonArray_(buttonArray),
         numButtons_(numButtons),
-        adcChannel_(adcChannel)
+        pAdc_(pAdc)
     {
     }
 
@@ -16,7 +16,7 @@ namespace button
 
     void ButtonChannel::update()
     {
-        uint16_t reading = analogRead(adcChannel_);
+        uint16_t reading = pAdc_->read();
         for (uint8_t i=0; i<numButtons_; i++)
         {
             buttonArray_[i]->update(reading);

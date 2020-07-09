@@ -1,21 +1,22 @@
 #ifndef PHOTO_TRANSISTOR_HPP
 #define PHOTO_TRANSISTOR_HPP
 
+#include "drivers/adc/IAdc.hpp"
 #include "utilities/filter/filter.hpp"
-
-using namespace FilterSpace;
 
 namespace photoTransistor{
 
     class PhotoTransistor{
         public:
-            int pin_;
-            Filter* pFilter_;
-
-            PhotoTransistor(int pin, Filter* pFilter);
+            PhotoTransistor(adc::IAdc* pAdc, filter::Filter* pFilter);
+            ~PhotoTransistor(){}
 
             void update();
             float getLightPercent();
+
+        private:
+            adc::IAdc* pAdc_;
+            filter::Filter* pFilter_;
     };
 }
 

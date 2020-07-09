@@ -9,8 +9,9 @@ namespace uart
     {
         public:
             virtual void initialize(){};
-            virtual void write(uint8_t* buff, uint8_t numBytes) = 0;
-            virtual void read(uint8_t* buff, uint8_t numBytes) = 0;
+            virtual bool isDataAvailable() { return false; }
+            virtual void write(uint8_t* buff, uint16_t numBytes) = 0;
+            virtual uint16_t read(uint8_t* buff, uint16_t numBytes) = 0;
     };
 }
 

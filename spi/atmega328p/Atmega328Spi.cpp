@@ -1,30 +1,31 @@
 #include "Atmega328Spi.hpp"
-#include <Arduino.h>
+#include "drivers/dio/atmega328/Atmega328Dio.hpp"
+#include "drivers/timer/Delay.hpp"
+#include <avr/interrupt.h>
+
+using namespace dio;
 
 namespace spi
 {
     void Atmega328Spi::SendByte(uint8_t data){ SPDR = data; }
     uint8_t Atmega328Spi::GetByte(){ return SPDR; }
 
-    Atmega328Spi::Atmega328Spi(uint8_t mosi,
-                               uint8_t miso,
-                               uint8_t clock,
-                               uint8_t slaveSelect,
+    Atmega328Spi::Atmega328Spi(IDio* pSlaveSelect,
                                bool isMaster,
                                SpiClock clockSpeed,
                                SpiPolarity polarity,
                                SpiPhase phase)
     {
-        slaveSelect_ = slaveSelect;
+        pSlaveSelect_ = pSlaveSelect;
         isMaster_ = isMaster;
 
         if (isMaster_)
         {
-            pinMode(miso, INPUT);
-            pinMode(mosi, OUTPUT);
-            pinMode(clock, OUTPUT);
-            pinMode(SS, OUTPUT);
-            pinMode(slaveSelect_, OUTPUT);
+            Atmega328Dio miso(Port::B, 4, INPUT, L_LOW, false, false);  // MISO must be INPUT
+            Atmega328Dio mosi(Port::B, 3, OUTPUT, L_LOW, false, false); // MOSI must be OUTPUT
+            Atmega328Dio sck(Port::B, 5, OUTPUT, L_LOW, false, false);  // CLOCK must be OUTPUT
+            Atmega328Dio ss(Port::B, 2, OUTPUT, L_LOW, false, false);   // SS might need to be OUTPUT
+
             releaseSlave();
 
             setSpiClockSpeed(clockSpeed);
@@ -35,11 +36,10 @@ namespace spi
             }
         else
         {
-            pinMode(miso, OUTPUT);
-            pinMode(mosi, INPUT);
-            pinMode(clock, INPUT);
-            pinMode(slaveSelect, INPUT);
-            pinMode(SS, INPUT);
+            Atmega328Dio miso(Port::B, 4, OUTPUT, L_LOW, false, false); // MISO must be OUTPUT
+            Atmega328Dio mosi(Port::B, 3, INPUT, L_LOW, false, false);  // MOSI must be INPUT
+            Atmega328Dio sck(Port::B, 5, INPUT, L_LOW, false, false);   // CLOCK must be INPUT
+            Atmega328Dio ss(Port::B, 2, INPUT, L_LOW, false, false);    // SS might need to be INPUT
 
             SPCR = 0 | (0 << MSTR) | // Enable master mode
                 (polarity << CPOL) | // Set polarity
@@ -53,7 +53,7 @@ namespace spi
     {
         SPDR = data;
         while (!writeComplete()){}
-        delayMicroseconds(delayMicroS);
+        DELAY_MICROSECONDS(delayMicroS);
         uint8_t result = SPDR;
         return result;
     }
@@ -103,12 +103,12 @@ namespace spi
 
     void Atmega328Spi::enable()
     {
-        SPCR |= bit(SPE);
+        SPCR |= (0x01 << SPE);
     }
 
     void Atmega328Spi::disable()
     {
-        SPCR &= ~bit(SPE);
+        SPCR &= ~(0x01 << SPE);
     }
 
     void Atmega328Spi::reset()
@@ -132,56 +132,56 @@ namespace spi
         switch (clockSpeed)
         {
             case CLOCK_DIV_2:
-                SPCR &= ~bit(SPR0);
-                SPCR &= ~bit(SPR1);
-                SPSR |= bit(SPI2X);
+                SPCR &= ~(0x01 << SPR0);
+                SPCR &= ~(0x01 << SPR1);
+                SPSR |= (0x01 << SPI2X);
                 break;
             case CLOCK_DIV_4:
-                SPCR &= ~bit(SPR0);
-                SPCR &= ~bit(SPR1);
-                SPSR &= ~bit(SPI2X);
+                SPCR &= ~(0x01 << SPR0);
+                SPCR &= ~(0x01 << SPR1);
+                SPSR &= ~(0x01 << SPI2X);
                 break;
             case CLOCK_DIV_8:
-                SPCR |= bit(SPR0);
-                SPCR &= ~bit(SPR1);
-                SPSR |= bit(SPI2X);
+                SPCR |= (0x01 << SPR0);
+                SPCR &= ~(0x01 << SPR1);
+                SPSR |= (0x01 << SPI2X);
                 break;
             case CLOCK_DIV_16:
-                SPCR |= bit(SPR0);
-                SPCR &= ~bit(SPR1);
-                SPSR &= ~bit(SPI2X);
+                SPCR |= (0x01 << SPR0);
+                SPCR &= ~(0x01 << SPR1);
+                SPSR &= ~(0x01 << SPI2X);
                 break;
             case CLOCK_DIV_32:
-                SPCR &= ~bit(SPR0);
-                SPCR |= bit(SPR1);
-                SPSR |= bit(SPI2X);
+                SPCR &= ~(0x01 << SPR0);
+                SPCR |= (0x01 << SPR1);
+                SPSR |= (0x01 << SPI2X);
                 break;
             case CLOCK_DIV_64:
-                SPCR &= ~bit(SPR0);
-                SPCR |= bit(SPR1);
-                SPSR &= ~bit(SPI2X);
+                SPCR &= ~(0x01 << SPR0);
+                SPCR |= (0x01 << SPR1);
+                SPSR &= ~(0x01 << SPI2X);
                 break;
             case CLOCK_DIV_128:
-                SPCR |= bit(SPR0);
-                SPCR |= bit(SPR1);
-                SPSR &= ~bit(SPI2X);
+                SPCR |= (0x01 << SPR0);
+                SPCR |= (0x01 << SPR1);
+                SPSR &= ~(0x01 << SPI2X);
                 break;
         }
     }
 
     void Atmega328Spi::selectSlave()
     {
-        digitalWrite(slaveSelect_, LOW);
+        pSlaveSelect_->set(L_LOW);
     }
 
     void Atmega328Spi::releaseSlave()
     {
-        digitalWrite(slaveSelect_, HIGH);
+        pSlaveSelect_->set(L_HIGH);
     }
 
-    void Atmega328Spi::setSlaveInterruptCallback(uint8_t slaveSelect, void (*receiveHandler)(uint8_t))
+    void Atmega328Spi::setSlaveInterruptCallback(IDio* pSlaveSelect, void (*receiveHandler)(uint8_t))
     {
-        SlaveSelect = slaveSelect;
+        pIntSlaveSelect = pSlaveSelect;
         SlaveReceiveHandler = receiveHandler;
 
         SPCR |= (1 << SPIE); // Enable interrupts
@@ -193,7 +193,7 @@ ISR(SPI_STC_vect)
     uint8_t value = SPDR;
     if (spi::SlaveReceiveHandler == nullptr) return;
 
-    if (digitalRead(spi::SlaveSelect) == LOW)
+    if (spi::pIntSlaveSelect->read() == L_LOW)
     {
         spi::SlaveReceiveHandler(value);
     }

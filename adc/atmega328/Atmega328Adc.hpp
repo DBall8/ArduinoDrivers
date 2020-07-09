@@ -66,10 +66,10 @@ namespace adc
             /**
              * Reads from the ADC channel with 10 bit resolution
              * 
-             * @param   value   Value to store the channel reading to
-             * @return  True if read was successful
+             * @param   bool   True if read was successful
+             * @return  Value of the channel reading
              */
-            bool read(uint16_t& value) override;
+            uint16_t read(bool* success = nullptr) override;
 
         private:
             Atmega328Channel channel_;

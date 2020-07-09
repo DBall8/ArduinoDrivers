@@ -1,145 +1,180 @@
 #include "ATmega328Timer.hpp"
-#include <Arduino.h>
+#include "drivers/assert/Assert.hpp"
+#include <avr/io.h>
+#include <avr/interrupt.h>
 
-namespace ATmega328Timer{
+namespace timer{
 
-    void InitializeTimer(Timer timer,
-                         TimerMode mode,
-                         TimerPrescaler prescaler,
-                         int top)
+    static volatile uint8_t* CONTORL_REG_A[] =
     {
-        switch (timer)
+        [TIMER_0] = &TCCR0A,
+        [TIMER_1] = &TCCR1A,
+        [TIMER_2] = &TCCR2A
+    };
+
+    static volatile uint8_t* CONTORL_REG_B[] =
+    {
+        [TIMER_0] = &TCCR0B,
+        [TIMER_1] = &TCCR1B,
+        [TIMER_2] = &TCCR2B
+    };
+
+    static volatile uint8_t* TIM_INTERRUPT_REG[] =
+    {
+        [TIMER_0] = &TIMSK0,
+        [TIMER_1] = &TIMSK1,
+        [TIMER_2] = &TIMSK2
+    };
+
+    const static uint8_t CTC_VALUE = (0x01 << 1);
+    const static uint8_t CTC_VALUE_TIM1 = (0x01 << 3);
+    const static uint8_t COMP_A_INTERRUPT_VAL = (0x01 << 1);
+
+    const static uint8_t PRESCALE_VALUE[] = 
+    {
+        [PRESCALE_OFF] = 0,
+        [PRESCALE_1] = 1,
+        [PRESCALE_8] = 2,
+        [PRESCALE_32] = 0,
+        [PRESCALE_64] = 3,
+        [PRESCALE_128] = 0,
+        [PRESCALE_256] = 4,
+        [PRESCALE_1024] = 5,
+        [EXTERNAL_FALLING] = 6,
+        [EXTERNAL_RISING] = 7,
+    };
+
+    const static uint8_t PRESCALE_VALUE_TIM2[] = 
+    {
+        [PRESCALE_OFF] = 0,
+        [PRESCALE_1] = 1,
+        [PRESCALE_8] = 2,
+        [PRESCALE_32] = 3,
+        [PRESCALE_64] = 4,
+        [PRESCALE_128] = 5,
+        [PRESCALE_256] = 6,
+        [PRESCALE_1024] = 7,
+        [EXTERNAL_FALLING] = 0,
+        [EXTERNAL_RISING] = 0,
+    };
+
+    Atmega328Timer::Atmega328Timer(Timer timer,
+                                   TimerMode mode,
+                                   TimerPrescaler prescaler,
+                                   uint16_t top,
+                                   void (*interrupt)(void)):
+        timer_(timer),
+        mode_(mode),
+        prescaler_(prescaler),
+        top_(top)
+    {
+        switch (timer_)
         {
             case TIMER_0:
             {
-                // 8-bit timer control registers
-                TCCR0A  = 0;
-                TCCR0B  = 0;
+                // Must be 8 bit
+                assert(top_ < 0x100);
 
-                if (mode == CTC){
-                    TCCR0A |= (1 << WGM01); // CTC mode
-                }
-
-                if (prescaler == PRESCALE_1 ||
-                    prescaler == PRESCALE_64 ||
-                    prescaler == PRESCALE_1024)
-                {
-                    TCCR0B |= (1 << CS00);
-                }
-
-                if (prescaler == PRESCALE_8 ||
-                    prescaler == PRESCALE_64)
-                {
-                    TCCR0B |= (1 << CS01);
-                }
-
-                if (prescaler == PRESCALE_256 ||
-                    prescaler == PRESCALE_1024)
-                {
-                    TCCR0B |= (1 << CS02);
-                }
-
-                // Compare A
-                OCR0A = (uint8_t)top;
+                // Must be a supported prescaler
+                assert(PRESCALE_VALUE[prescaler_] > 0);
                 break;
             }
+
             case TIMER_1:
-            default:
             {
-                // 8-bit timer control registers
-                TCCR1A  = 0;
-                TCCR1B  = 0;
-
-                if (mode == CTC){
-                    TCCR1B |= (1 << WGM12); // CTC mode
-                }
-
-                if (prescaler == PRESCALE_1 ||
-                    prescaler == PRESCALE_64 ||
-                    prescaler == PRESCALE_1024)
-                {
-                    TCCR1B |= (1 << CS10);
-                }
-
-                if (prescaler == PRESCALE_8 ||
-                    prescaler == PRESCALE_64)
-                {
-                    TCCR1B |= (1 << CS11);
-                }
-
-                if (prescaler == PRESCALE_256 ||
-                    prescaler == PRESCALE_1024)
-                {
-                    TCCR1B |= (1 << CS12);
-                }
-
-                // Compare A
-                OCR1A = top;
+                // Must be a supported prescaler
+                assert(PRESCALE_VALUE[prescaler_] > 0);
+                break;
             }
 
+            default:
             case TIMER_2:
             {
-                // 8-bit timer control registers
-                TCCR2A  = 0;
-                TCCR2B  = 0;
+                // Must be 8 bit
+                assert(top_ < 0x100);
 
-                if (mode == CTC){
-                    TCCR2A |= (1 << WGM21); // CTC mode
-                }
-
-                if (prescaler == PRESCALE_1 ||
-                    prescaler == PRESCALE_32 ||
-                    prescaler == PRESCALE_128 ||
-                    prescaler == PRESCALE_1024)
-                {
-                    TCCR2B |= (1 << CS20);
-                }
-
-                if (prescaler == PRESCALE_8 ||
-                    prescaler == PRESCALE_32 ||
-                    prescaler == PRESCALE_256 ||
-                    prescaler == PRESCALE_1024)
-                {
-                    TCCR2B |= (1 << CS21);
-                }
-
-                if (prescaler == PRESCALE_64 ||
-                    prescaler == PRESCALE_128 ||
-                    prescaler == PRESCALE_256 ||
-                    prescaler == PRESCALE_1024)
-                {
-                    TCCR2B |= (1 << CS22);
-                }
-
-                // Compare A
-                OCR2A = (uint8_t)top;
+                // Must be a supported prescaler
+                assert(PRESCALE_VALUE_TIM2[prescaler_] > 0);
                 break;
             }
         }
+        setCompAInterrupt(timer, interrupt);
     }
 
-    void SetCompAInterrupt(Timer timer, void (*interrupt)(void)){
+    void Atmega328Timer::initialize()
+    {
+        // Clear control registers
+        *CONTORL_REG_A[timer_] = 0;
+        *CONTORL_REG_B[timer_] = 0;
+
+        switch (timer_)
+        {
+            case TIMER_0:
+            {
+                // Set mode
+                if (mode_ == CTC){
+                    *CONTORL_REG_A[timer_] |= CTC_VALUE;
+                }
+
+                // Set prescaler
+                *CONTORL_REG_B[timer_] |= PRESCALE_VALUE[prescaler_];
+
+                // Set the compare A top value (8 bit)
+                OCR0A = (uint8_t)top_;
+                break;
+            }
+
+            case TIMER_1:
+            {
+                // Set mode
+                if (mode_ == CTC){
+                    *CONTORL_REG_B[timer_] |= CTC_VALUE_TIM1;
+                }
+
+                // Set prescaler
+                *CONTORL_REG_B[timer_] |= PRESCALE_VALUE[prescaler_];
+
+                // Set the compare A top value (16 bit)
+                OCR1A = top_;
+            }
+
+            default:
+            case TIMER_2:
+            {
+                // Set mode
+                if (mode_ == CTC){
+                    *CONTORL_REG_A[timer_] |= CTC_VALUE;
+                }
+
+                // Set prescaler
+                *CONTORL_REG_B[timer_] |= PRESCALE_VALUE_TIM2[prescaler_];
+
+                // Set the compare A top value (8 bit)
+                OCR2A = (uint8_t)top_;
+                break;
+            }
+        }
+
+        // Enable timer interrupt
+        enableCompAInterrupt(timer_);
+    }
+
+    void Atmega328Timer::setCompAInterrupt(Timer timer, void (*interrupt)(void)){
 
         switch (timer){
             case TIMER_0:
             {
-#ifdef ENABLE_TIM0_COMPA
                 Timer0CompareAInterrupt = interrupt;
-#endif
                 break;
             }
             case TIMER_1:
             {
-#ifdef ENABLE_TIM1_COMPA
                 Timer1CompareAInterrupt = interrupt;
-#endif
                 break;
             }
             case TIMER_2:
             {
-#ifdef ENABLE_TIM2_COMPA
                 Timer2CompareAInterrupt = interrupt;
-#endif
                 break;
             }
             default:
@@ -149,65 +184,24 @@ namespace ATmega328Timer{
         }
     }
 
-    void EnableCompAInterrupt(Timer timer){
-        switch (timer){
-            case TIMER_0:
-            {
-                TIMSK0 |= (1 << OCIE0A);
-                break;
-            }
-
-            case TIMER_1:
-            {
-                TIMSK1 |= (1 << OCIE1A);
-                break;
-            }
-
-            case TIMER_2:
-            {
-                TIMSK2 |= (1 << OCIE2A); // Untested
-                break;
-            }
-        }
+    void Atmega328Timer::enableCompAInterrupt(Timer timer)
+    {
+        *TIM_INTERRUPT_REG[timer] |= COMP_A_INTERRUPT_VAL;
     }
 
-    void DisableCompAInterrupt(Timer timer){
-        switch (timer){
-            case TIMER_0:
-            {
-                TIMSK0 &= ~(1 << OCIE0A); // Untested
-                break;
-            }
-
-            case TIMER_1:
-            {
-                TIMSK1 &= ~(1 << OCIE1A);
-                break;
-            }
-
-            case TIMER_2:
-            {
-                TIMSK2 &= ~(1 << OCIE2A); // Untested
-                break;
-            }
-        }
+    void Atmega328Timer::disableCompAInterrupt(Timer timer){
+        *TIM_INTERRUPT_REG[timer] &= ~COMP_A_INTERRUPT_VAL;
     }
 
-#ifdef ENABLE_TIM0_COMPA
     ISR(TIMER0_COMPA_vect){
         Timer0CompareAInterrupt();
     }
-#endif
 
-#ifdef ENABLE_TIM1_COMPA
     ISR(TIMER1_COMPA_vect){
         Timer1CompareAInterrupt();
     }
-#endif
 
-#ifdef ENABLE_TIM2_COMPA
     ISR(TIMER2_COMPA_vect){
         Timer2CompareAInterrupt();
     }
-#endif
 }

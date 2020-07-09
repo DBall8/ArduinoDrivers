@@ -8,14 +8,16 @@ namespace ticCounter{
     class TicCounter{
 
         public:
-            TicCounter();
+            TicCounter(uint32_t ticsPerSecond);
             ~TicCounter();
 
-            uint32_t getTicCount();
+            volatile uint32_t getTicCount();
             void incrementTicCount();
+            uint32_t getTicsPerSecond() { return ticsPerSecond_; }
 
         private:
-            uint32_t ticCount_;
+            volatile uint32_t ticCount_;
+            uint32_t ticsPerSecond_;
     };
 }
 
