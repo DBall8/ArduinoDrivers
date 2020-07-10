@@ -22,6 +22,7 @@ const static uint8_t STATUS = 0x07;     // Status register
 const static uint8_t TX_ADDR = 0x10;    // Register to write transmit address to
 const static uint8_t RX_ADDR_P0 = 0x0a; // Address for pipe 0
 const static uint8_t RX_PW_P0 = 0x11;   // Payload size for pipe 0
+const static uint8_t FIFO_STATUS = 0x17;// TX and RX empty and full status
 const static uint8_t DYNPD = 0x1C;      // Enable dynamic payload lengths
 const static uint8_t FEATURE = 0x1D;    // Enable Ack types
 
@@ -58,6 +59,12 @@ const static uint8_t ARC = 0;
 const uint8_t RX_DR = 0x06;
 const uint8_t TX_DS = 0x05;
 const uint8_t MAX_RT = 0x04;
+
+// FIFO status register buts
+const uint8_t TX_FULL = 0x05;
+const uint8_t TX_EMPTY = 0x04;
+const uint8_t RX_FULL = 0x01;
+const uint8_t RX_EMPTY = 0x00;
 
 // Reading pipes
 const uint8_t NUM_RX_PIPES = 6;
@@ -446,20 +453,10 @@ namespace radio
 
     bool Nrf24l01::isDataAvailable()
     {
-        uint8_t status = readRegister(STATUS);
-        bool dataAvailable = status & (1 << RX_DR);
+        uint8_t fifoStatus = readRegister(FIFO_STATUS);
+        uint8_t rxEmpty = fifoStatus & (1 << RX_EMPTY);
 
-        if (dataAvailable)
-        {
-            writeRegister(STATUS, (1 << RX_DR));
-        }
-
-        if (status & (1 << TX_DS))
-        {
-            writeRegister(STATUS, (1 << TX_DS));
-        }
-
-        return dataAvailable;
+        return !rxEmpty;
     }
 
     bool Nrf24l01::receive(uint8_t* buff, uint8_t numBytes)
