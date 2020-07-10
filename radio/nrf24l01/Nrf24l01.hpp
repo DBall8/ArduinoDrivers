@@ -25,7 +25,12 @@ namespace radio
     class Nrf24l01 : public IRadio
     {
         public:
-            Nrf24l01(dio::IDio* pCePin, spi::SpiDriver* pSpi);
+            Nrf24l01(dio::IDio* pCePin,
+                     spi::SpiDriver* pSpi,
+                     DataSpeed dataSpeed = DataSpeed::RF_1_MBPS,
+                     PaLevel paLevel = PaLevel::PA_LOW,
+                     uint32_t transferDelayMicroS = 20);
+
             ~Nrf24l01();
 
             /**
@@ -107,6 +112,9 @@ namespace radio
         private:
             dio::IDio* pCePin_;
             spi::SpiDriver* pSpi_;
+            DataSpeed dataSpeed_;
+            PaLevel paLevel_;
+            uint32_t transferDelayMicroS_;
             uint8_t payloadSize_;
 
             bool isInitialized_;

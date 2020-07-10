@@ -92,12 +92,18 @@ enum ERX_BITS: uint8_t
     ERX_5
 };
 
-const static uint32_t SPI_DELAY_MICRO_S = 10; 
 namespace radio
 {
-    Nrf24l01::Nrf24l01(IDio* pCePin, SpiDriver* pSpi):
+    Nrf24l01::Nrf24l01(IDio* pCePin,
+                       SpiDriver* pSpi,
+                       DataSpeed dataSpeed,
+                       PaLevel paLevel,
+                       uint32_t transferDelayMicroS):
         pCePin_(pCePin),
         pSpi_(pSpi),
+        dataSpeed_(dataSpeed),
+        paLevel_(paLevel),
+        transferDelayMicroS_(transferDelayMicroS),
         payloadSize_(MAX_TRANSMISSION_SIZE),
         isInitialized_(false)
     {
@@ -137,8 +143,8 @@ namespace radio
         writeRegister(CONFIG_REG, config);
 
         // Set setup
-        setPaLevel(PA_LOW);
-        setDataSpeed(RF_1_MBPS);
+        setPaLevel(paLevel_);
+        setDataSpeed(dataSpeed_);
         setupRetries(15, 5);
 
         // Disable dynamic payload length
@@ -246,8 +252,8 @@ namespace radio
 
         // Send the command followed by the value
         pSpi_->selectSlave();
-        pSpi_->transfer(command, SPI_DELAY_MICRO_S);
-        pSpi_->transfer(value, SPI_DELAY_MICRO_S);
+        pSpi_->transfer(command, transferDelayMicroS_);
+        pSpi_->transfer(value, transferDelayMicroS_);
         pSpi_->releaseSlave();
     }
 
@@ -259,8 +265,8 @@ namespace radio
         // Send the register followed by any value, and get the respond
         // from the second transfer
         pSpi_->selectSlave();
-        pSpi_->transfer(command, SPI_DELAY_MICRO_S);
-        uint8_t value = pSpi_->transfer(NOP, SPI_DELAY_MICRO_S);
+        pSpi_->transfer(command, transferDelayMicroS_);
+        uint8_t value = pSpi_->transfer(NOP, transferDelayMicroS_);
         pSpi_->releaseSlave();
 
         return value;
@@ -273,8 +279,8 @@ namespace radio
 
         // Send the command followed by the value
         pSpi_->selectSlave();
-        pSpi_->transfer(command, SPI_DELAY_MICRO_S);
-        pSpi_->write(buff, numValues, SPI_DELAY_MICRO_S);
+        pSpi_->transfer(command, transferDelayMicroS_);
+        pSpi_->write(buff, numValues, transferDelayMicroS_);
         pSpi_->releaseSlave();
     }
 
@@ -286,15 +292,15 @@ namespace radio
         // Send the register followed by any value, and get the respond
         // from the second transfer
         pSpi_->selectSlave();
-        pSpi_->transfer(command, SPI_DELAY_MICRO_S);
-        pSpi_->read(buff, numValues, SPI_DELAY_MICRO_S);
+        pSpi_->transfer(command, transferDelayMicroS_);
+        pSpi_->read(buff, numValues, transferDelayMicroS_);
         pSpi_->releaseSlave();
     }
 
     void Nrf24l01::sendCommand(uint8_t command)
     {
         pSpi_->selectSlave();
-        pSpi_->transfer(command, SPI_DELAY_MICRO_S);
+        pSpi_->transfer(command, transferDelayMicroS_);
         pSpi_->releaseSlave();
     }
 
@@ -371,20 +377,19 @@ namespace radio
         pSpi_->selectSlave();
 
         // Send TX command
-        pSpi_->transfer(W_TX_PAYLOAD, SPI_DELAY_MICRO_S);
+        pSpi_->transfer(W_TX_PAYLOAD, transferDelayMicroS_);
 
         // Transmit data
         for (uint8_t i=0; i<numBytes; i++)
         {
-            pSpi_->transfer(buff[i], SPI_DELAY_MICRO_S);
+            pSpi_->transfer(buff[i], transferDelayMicroS_);
         }
 
         // Send 0s to fill out rest of transmission size
         for (uint8_t i=numBytes; i<payloadSize_; i++)
         {
-            pSpi_->transfer(0, SPI_DELAY_MICRO_S);
+            pSpi_->transfer(0, transferDelayMicroS_);
         }
-        //pSpi_->write(buffer, numBytes, SPI_DELAY_MICRO_S); // Send payload
         pSpi_->releaseSlave();
 
         // Pulse CE high to start transmission
@@ -418,6 +423,8 @@ namespace radio
             PRINTLN("Transmission failed: unknown reason");
         }
 #endif
+
+        if (!successfull) flush(); // Drop active transaction on failure
 
         clearStatusReg();
 
@@ -466,8 +473,8 @@ namespace radio
     { 
         uint8_t data[payloadSize_];
         pSpi_->selectSlave();
-        pSpi_->transfer(R_RX_PAYLOAD, SPI_DELAY_MICRO_S);
-        pSpi_->read(data, payloadSize_, SPI_DELAY_MICRO_S);
+        pSpi_->transfer(R_RX_PAYLOAD, transferDelayMicroS_);
+        pSpi_->read(data, payloadSize_, transferDelayMicroS_);
         pSpi_->releaseSlave();
 
         for (uint8_t i=0; i<numBytes; i++)
