@@ -14,12 +14,12 @@ namespace radio
         RF_2_MBPS
     };
 
-    enum PaLevel: uint8_t
+    enum PaLevel: uint8_t   // Note: stats are unboosted
     {
-        PA_LOW = 0,
-        PA_MED,
-        PA_HIGH,
-        PA_MAX
+        PA_LOW = 0, // -18 dBm, 7.0 mA
+        PA_MED,     // -12 dBm, 7.5 mA
+        PA_HIGH,    // -6 dBm, 9.0 mA
+        PA_MAX      // 0 dBm, 11.3 mA
     };
 
     class Nrf24l01 : public IRadio
