@@ -16,4 +16,13 @@ namespace ticCounter{
     void TicCounter::incrementTicCount(){
         ticCount_++;
     }
+
+    uint32_t TicCounter::secondsToTics(uint32_t seconds)
+    {
+        return ticsPerSecond_ * seconds;
+    }
+    uint32_t TicCounter::msecondsToTics(uint32_t mseconds)
+    {
+        return ticsPerSecond_ * mseconds / 1000;
+    }
 }

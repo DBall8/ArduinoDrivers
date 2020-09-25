@@ -1,4 +1,6 @@
 #include "Delay.hpp"
+#include "drivers/assert/Assert.hpp"
+#include "utilities/print/Print.hpp"
 
 ticCounter::TicCounter* Delay::pTicCounter_ = nullptr;
 
@@ -11,9 +13,16 @@ void Delay::delay(uint32_t milliseconds)
 {
     if (Delay::pTicCounter_ == nullptr)
     {
+		assert(false, "Delay driver not initialized");
         return;
     }
-    uint32_t ticsToDelay = (milliseconds * Delay::pTicCounter_->getTicsPerSecond()) / 1000;
+
+	uint32_t ticsTimesMilliseconds = milliseconds * Delay::pTicCounter_->getTicsPerSecond();
+    float ticsToDelay = ticsTimesMilliseconds / 1000;
+
+	// Round up 
+	if (ticsTimesMilliseconds % 1000) ticsToDelay += 1;
+
     uint32_t startTic = Delay::pTicCounter_->getTicCount();
 
     volatile uint32_t currentTic = startTic;

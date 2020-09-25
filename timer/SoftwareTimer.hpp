@@ -29,7 +29,7 @@ namespace softwareTimer{
             TicCounter* pTicCounter_;   // Tic tracker
             uint32_t periodInTics_;     // Timer period
             bool isEnabled_;            
-            bool hasPeriodPassed_;      // Has at least one period passed
+            uint16_t numPeriodsPassed_; // Number of periods passed since last call to hasPeriodPassed
             bool hasOneShotPassed_;     // Has a new period passed since last check
 
             uint32_t startTic_;         // Tic the timer was enabled during

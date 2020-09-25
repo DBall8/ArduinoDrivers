@@ -1,12 +1,14 @@
 #include "SoftwareTimer.hpp"
 
+#include "utilities/print/Print.hpp"
+
 namespace softwareTimer{
 
     SoftwareTimer::SoftwareTimer(uint32_t periodInTics, TicCounter* pTicCounter):
         pTicCounter_(pTicCounter),
         periodInTics_(periodInTics),
         isEnabled_(false),
-        hasPeriodPassed_(false),
+        numPeriodsPassed_(0),
         hasOneShotPassed_(false),
         startTic_(0),
         prevPeriodTic_(0)
@@ -21,7 +23,7 @@ namespace softwareTimer{
         isEnabled_ = true;
         
         hasOneShotPassed_ = false;
-        hasPeriodPassed_ = false;
+        numPeriodsPassed_ = 0;
 
         startTic_ = pTicCounter_->getTicCount();
         prevPeriodTic_ = startTic_;
@@ -47,15 +49,13 @@ namespace softwareTimer{
 
     bool SoftwareTimer::hasPeriodPassed(){
         update();
-        bool hasPeriodPassed = hasPeriodPassed_;
+        bool hasPeriodPassed = numPeriodsPassed_ > 0;
 
         // If period has passed, find the next period
-        if (hasPeriodPassed_){
+        if (hasPeriodPassed){
             // Calculate the new "previous period" tic
-            uint32_t ticCount = pTicCounter_->getTicCount();
-            uint32_t periodOffset = (ticCount - startTic_) % periodInTics_;
-            prevPeriodTic_ = (ticCount - periodOffset);
-            hasPeriodPassed_ = false;
+            prevPeriodTic_ += numPeriodsPassed_ * periodInTics_;
+            numPeriodsPassed_ = 0;
         }
 
         return hasPeriodPassed;
@@ -77,10 +77,18 @@ namespace softwareTimer{
         }
 
         // If period hasn't passed, check if it has
-        if (!hasPeriodPassed_)
-        {
-            hasPeriodPassed_ = (currentTic - prevPeriodTic_) >= periodInTics_;
-        }
+        numPeriodsPassed_ += (currentTic - prevPeriodTic_) / periodInTics_;
+
+        // if (hasPeriodPassed_)
+        // {
+        //     PRINTLN("    Ctic: 0x%x%x, Ptic 0x%x%x, Period: 0x%x%x",
+        //         (uint16_t)(currentTic >> 16),
+        //         (uint16_t)currentTic,
+        //         (uint16_t)(prevPeriodTic_ >> 16),
+        //         (uint16_t)prevPeriodTic_,
+        //         (uint16_t)(periodInTics_ >> 16),
+        //         (uint16_t)periodInTics_);
+        // }
     }
 
     void SoftwareTimer::printDebug()
