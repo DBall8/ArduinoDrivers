@@ -10,10 +10,13 @@ namespace photoTransistor{
     PhotoTransistor::PhotoTransistor(IAdc* pAdc, Filter* pFilter):
         pAdc_(pAdc),
         pFilter_(pFilter)
-    {}
+    {
+        pAdc_->enable();
+    }
 
     void PhotoTransistor::update(){
         bool success;
+
         uint16_t reading = pAdc_->read(&success);
         if (!success) return;
 
