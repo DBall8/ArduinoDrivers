@@ -22,6 +22,13 @@ namespace radio
         PA_MAX      // 0 dBm, 11.3 mA
     };
 
+    enum RfStatus: uint8_t
+    {
+        IDLE,
+        TRANSMITTING,
+        RECEIVING
+    };
+
     class Nrf24l01 : public IRadio
     {
         public:
@@ -117,6 +124,7 @@ namespace radio
             uint32_t transferDelayMicroS_;
             uint8_t payloadSize_;
 
+            RfStatus status_;
             bool isInitialized_;
 
             /**

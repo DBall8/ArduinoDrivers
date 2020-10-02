@@ -112,6 +112,7 @@ namespace radio
         paLevel_(paLevel),
         transferDelayMicroS_(transferDelayMicroS),
         payloadSize_(MAX_TRANSMISSION_SIZE),
+        status_(RfStatus::IDLE),
         isInitialized_(false)
     {
     }
@@ -169,9 +170,17 @@ namespace radio
     {
         if (!isInitialized_) initialize();
 
+        if (status_ == RfStatus::RECEIVING)
+        {
+            // We are receiving, stop doing so first
+            stop();
+        }
+
         char address[ADDRESS_LEN+1] = "00000";
         address[ADDRESS_LEN-1] = (char)listenerId;
         startTransmitting(address);
+
+        status_ = RfStatus::TRANSMITTING;
 
         return true;
     }
@@ -180,10 +189,18 @@ namespace radio
     {
         if (!isInitialized_) initialize();
 
+        if (status_ == RfStatus::TRANSMITTING)
+        {
+            // We are transmitting, stop so we can receive
+            stop();
+        }
+
         uint8_t pipeNum = listenerId % NUM_RX_PIPES;
         char address[ADDRESS_LEN+1] = "00000";
         address[ADDRESS_LEN-1] = (char)listenerId;
         startListening(pipeNum, address);
+
+        status_ = RfStatus::RECEIVING;
 
         return true;
     }
@@ -252,7 +269,7 @@ namespace radio
         writeRegister(SETUP_RETR, retryReg);
     }
 
-        void Nrf24l01::writeRegister(uint8_t reg, uint8_t value)
+    void Nrf24l01::writeRegister(uint8_t reg, uint8_t value)
     {
         // Command is the register plus the write mask
         uint8_t command = WRITE_MASK | (reg & REGISTER_MASK);
@@ -381,6 +398,9 @@ namespace radio
 
     bool Nrf24l01::transmit(uint8_t* buff, uint8_t numBytes)
     {
+        // Must have already called startTransmitting
+        if (status_ != RfStatus::TRANSMITTING) return false;
+
         pSpi_->selectSlave();
 
         // Send TX command
@@ -468,6 +488,9 @@ namespace radio
 
     bool Nrf24l01::receive(uint8_t* buff, uint8_t numBytes)
     { 
+        // Must have already called startListening
+        if (status_ != RfStatus::RECEIVING) return false;
+
         uint8_t data[payloadSize_];
         pSpi_->selectSlave();
         pSpi_->transfer(R_RX_PAYLOAD, transferDelayMicroS_);
