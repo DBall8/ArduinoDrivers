@@ -5,7 +5,7 @@
 #ifndef IDIO_HPP
 #define IDIO_HPP
 
-#include <stdio.h>
+#include <stdint.h>
 
 namespace Dio
 {

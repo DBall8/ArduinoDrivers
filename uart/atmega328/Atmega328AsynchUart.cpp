@@ -130,6 +130,19 @@ namespace Uart
         return !rxBuffer_.isEmpty();
     }
 
+    void Atmega328AsynchUart::flush()
+    {
+        bool intEnabled = pInterruptControl_->areInterruptsEnabled();
+        pInterruptControl_->enableInterrupts();
+
+        while (isDataAvailable())
+        {
+            // Busy loop until all data has been written to uart
+        }
+
+        if (intEnabled) pInterruptControl_->enableInterrupts();
+    }
+
     void Atmega328AsynchUart::HanleDataRegisterEmpty()
     {
         if (!Atmega328AsynchUart::pTxBuffer_->isEmpty())

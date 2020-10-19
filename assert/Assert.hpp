@@ -17,6 +17,9 @@ static void assert(bool val, const char* text = nullptr)
 
     PRINTLN(".");
 
+    // Flush uart before entering busy loop
+    PRINT_FLUSH();
+
     while(1)
     {
         // Infinite loop

@@ -60,6 +60,11 @@ namespace Uart
             virtual uint16_t read(uint8_t* buff, uint16_t numBytes) override;
 
             /**
+             * Empty all contents of the write buffer to the uart
+             */
+            void flush() override;
+
+            /**
              * Callback for the Data Register Empty interrupt
              */
             static void HanleDataRegisterEmpty();
