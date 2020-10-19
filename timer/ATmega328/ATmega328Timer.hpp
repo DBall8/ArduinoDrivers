@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 
-namespace timer{
+namespace Timer
+{
 
     enum Timer{
         TIMER_0 = 0,

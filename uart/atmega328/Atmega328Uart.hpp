@@ -3,7 +3,7 @@
 
 #include "drivers/uart/IUart.hpp"
 
-namespace uart
+namespace Uart
 {
     enum BaudRate: uint8_t
     {

@@ -1,7 +1,7 @@
 #ifndef IINTERRUPT_HPP
 #define IINTERRUPT_HPP
 
-namespace interrupt
+namespace Interrupt
 {
     class IInterrupt
     {

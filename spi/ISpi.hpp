@@ -1,9 +1,9 @@
-#ifndef SPI_DRIVER_HPP
-#define SPI_DRIVER_HPP
+#ifndef ISPI_HPP
+#define ISPI_HPP
 
 #include <stdint.h>
 
-namespace spi
+namespace Spi
 {
 
     enum SpiPolarity: uint8_t
@@ -18,11 +18,11 @@ namespace spi
         SAMPLE_FALLING
     };
 
-    class SpiDriver
+    class ISpi
     {
         public:
-            SpiDriver(){}
-            ~SpiDriver(){}
+            ISpi(){}
+            ~ISpi(){}
 
             virtual uint8_t transfer(uint8_t data, uint32_t delayMicroS) = 0;
 

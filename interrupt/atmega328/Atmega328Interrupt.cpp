@@ -1,7 +1,7 @@
 #include "Atmega328Interrupt.hpp"
 #include <avr/interrupt.h>
 
-namespace interrupt
+namespace Interrupt
 {
     Atmega328Interrupt::Atmega328Interrupt():
         areInterruptsEnabled_(false)

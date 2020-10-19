@@ -30,7 +30,7 @@ namespace I2c{
              * @param   usePullup       If true, use the Atmega's internal pullup resistors for the i2c lines
              */
             Atmega328I2c(I2cBitRate bitRate,
-                        softwareTimer::SoftwareTimer* pTimeoutTimer = nullptr,
+                        Timer::SoftwareTimer* pTimeoutTimer = nullptr,
                         bool usePullup = false);
 
             /**
@@ -82,7 +82,7 @@ namespace I2c{
 
         private:
             // Timeout timer for the wait() call
-            softwareTimer::SoftwareTimer* pTimeoutTimer_;
+            Timer::SoftwareTimer* pTimeoutTimer_;
 
             // Tracks if i2c has been enabled
             bool enabled_;

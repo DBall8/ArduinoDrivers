@@ -3,7 +3,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-namespace timer{
+namespace Timer{
 
     static volatile uint8_t* CONTORL_REG_A[] =
     {

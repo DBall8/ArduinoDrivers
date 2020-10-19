@@ -1,8 +1,8 @@
 #include "DigitalButton.hpp"
 
-using namespace dio;
+using namespace Dio;
 
-namespace button
+namespace Button
 {
     DigitalButton::DigitalButton(IDio* pDio)
     {

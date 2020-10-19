@@ -1,10 +1,10 @@
 #ifndef ATMEGA328_SPI_HPP
 #define ATMEGA328_SPI_HPP
 
-#include "drivers/spi/SpiDriver.hpp"
+#include "drivers/spi/ISpi.hpp"
 #include "drivers/dio/IDio.hpp"
 
-namespace spi
+namespace Spi
 {
     enum SpiClock
     {
@@ -17,7 +17,7 @@ namespace spi
         CLOCK_DIV_128,
     };
 
-    class Atmega328Spi : public SpiDriver
+    class Atmega328Spi : public ISpi
     {
         public:
 
@@ -25,7 +25,7 @@ namespace spi
             static uint8_t GetByte();
 
             // Construct as Master
-            Atmega328Spi(dio::IDio* pSlaveSelect,
+            Atmega328Spi(Dio::IDio* pSlaveSelect,
                          bool isMaster,
                          SpiClock clockSpeed = CLOCK_DIV_4,
                          SpiPolarity polarity = IDLE_LOW,
@@ -54,20 +54,20 @@ namespace spi
 
             bool writeCollisionOccurred();
 
-            void setSlaveInterruptCallback(dio::IDio* pSlaveSelect, void (*receiveHandler)(uint8_t));
+            void setSlaveInterruptCallback(Dio::IDio* pSlaveSelect, void (*receiveHandler)(uint8_t));
 
             void selectSlave() override;
             void releaseSlave() override;
 
         private:
-            dio::IDio* pSlaveSelect_;
+            Dio::IDio* pSlaveSelect_;
             bool isMaster_;
 
             bool writeComplete();
             void setSpiClockSpeed(SpiClock clockSpeed);;
     };
 
-    static dio::IDio* pIntSlaveSelect = nullptr;
+    static Dio::IDio* pIntSlaveSelect = nullptr;
     static void (*SlaveReceiveHandler)(uint8_t) = nullptr;
 }
 

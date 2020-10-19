@@ -2,7 +2,7 @@
 #include "drivers/assert/Assert.hpp"
 #include <avr/io.h>
 
-namespace uart
+namespace Uart
 {
     const static uint32_t baudRates[] =
     {

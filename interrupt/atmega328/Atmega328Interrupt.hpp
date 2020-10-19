@@ -3,7 +3,7 @@
 
 #include "drivers/interrupt/IInterrupt.hpp"
 
-namespace interrupt
+namespace Interrupt
 {
     class Atmega328Interrupt: public IInterrupt
     {

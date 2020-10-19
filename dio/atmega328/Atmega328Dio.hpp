@@ -6,7 +6,7 @@
 
 #include "drivers/dio/IDio.hpp"
 
-namespace dio
+namespace Dio
 {
     enum Mode: uint8_t
     {

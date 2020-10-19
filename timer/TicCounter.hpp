@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace ticCounter{
+namespace Tic{
 
     class TicCounter{
 

@@ -1,11 +1,11 @@
 #ifndef ATMEGA328_ASYNCH_UART_HPP
 #define ATMEGA328_ASYNCH_UART_HPP
 
-#include "drivers/uart/atmega328Uart/Atmega328Uart.hpp"
+#include "drivers/uart/atmega328/Atmega328Uart.hpp"
 #include "utilities/circular_queue/CircularQueue.hpp"
 #include "drivers/interrupt/IInterrupt.hpp"
 
-namespace uart
+namespace Uart
 {
     class Atmega328AsynchUart : public Atmega328Uart
     {
@@ -27,7 +27,7 @@ namespace uart
                                 uint16_t rxLength, 
                                 BaudRate baudRate,
                                 uint32_t fCpu,
-                                interrupt::IInterrupt* pInterruptControl,
+                                Interrupt::IInterrupt* pInterruptControl,
                                 bool enableParity = false, 
                                 bool polarity = false);
             ~Atmega328AsynchUart();
@@ -74,7 +74,7 @@ namespace uart
             // Static copies for use in interrupt handling
             static CircularQueue<uint8_t>* pTxBuffer_;
             static CircularQueue<uint8_t>* pRxBuffer_;
-            static interrupt::IInterrupt* pInterruptControl_;
+            static Interrupt::IInterrupt* pInterruptControl_;
 
             CircularQueue<uint8_t> txBuffer_;   // Stores outgoing bytes
             CircularQueue<uint8_t> rxBuffer_;   // Stores incoming bytes

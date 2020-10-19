@@ -15,7 +15,7 @@ class Delay
          * 
          * @param   pTicCounter Pointer to a tic counter to use for delaying
          */
-        static void Initialize(ticCounter::TicCounter* pTicCounter);
+        static void Initialize(Tic::TicCounter* pTicCounter);
 
         /**
          * Pause for some time
@@ -26,7 +26,7 @@ class Delay
         static void delayMicroseconds(uint32_t microseconds);
 
     private:
-        static ticCounter::TicCounter* pTicCounter_;
+        static Tic::TicCounter* pTicCounter_;
 };
 
 #endif

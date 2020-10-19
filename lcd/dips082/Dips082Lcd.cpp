@@ -2,7 +2,7 @@
 #include "drivers/timer/Delay.hpp"
 #include "utilities/print/Print.hpp"
 
-using namespace dio;
+using namespace Dio;
 
 namespace Lcd
 {
@@ -52,10 +52,10 @@ namespace Lcd
     const static uint8_t FOUR_BIT_INITIALIZATION = 0x02;
     const static uint8_t EIGHT_BIT_INITIALIZATION = 0x30;
 
-    Dips082Lcd::Dips082Lcd(dio::IDio* pRsPin,
-                           dio::IDio* pRwPin, 
-                           dio::IDio* pOePin, 
-                           dio::IDio** dataPinArray,
+    Dips082Lcd::Dips082Lcd(Dio::IDio* pRsPin,
+                           Dio::IDio* pRwPin, 
+                           Dio::IDio* pOePin, 
+                           Dio::IDio** dataPinArray,
                            uint8_t numDataPins) :
         pRsPin_(pRsPin),
         pRwPin_(pRwPin),

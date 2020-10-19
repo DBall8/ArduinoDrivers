@@ -1,9 +1,9 @@
 #include "ButtonChannel.hpp"
 #include "drivers/assert/Assert.hpp"
 
-using namespace adc;
+using namespace Adc;
 
-namespace button
+namespace Button
 {
     ButtonChannel::ButtonChannel(IAdc* pAdc, AnalogButton** buttonArray, uint8_t numButtons):
         buttonArray_(buttonArray),

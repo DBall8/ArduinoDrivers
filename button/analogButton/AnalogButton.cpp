@@ -1,6 +1,6 @@
 #include "AnalogButton.hpp"
 
-namespace button
+namespace Button
 {
     AnalogButton::AnalogButton(ValidRange* validRanges, uint8_t numValidRanges):
         state_(ButtonState::INVALID),

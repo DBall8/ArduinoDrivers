@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace button
+namespace Button
 {
     enum class ButtonState: uint8_t 
     {

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace radio
+namespace Radio
 {
     class IRadio
     {

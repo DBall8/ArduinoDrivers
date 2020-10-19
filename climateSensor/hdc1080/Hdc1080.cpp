@@ -6,8 +6,8 @@
 #include "utilities/print/Print.hpp"
 
 using namespace I2c;
-using namespace softwareTimer;
-using namespace ticCounter;
+using namespace Timer;
+using namespace Tic;
 
 const static uint8_t SLAVE_ID = 0x40;  // 7 bit slave address
 
@@ -48,8 +48,8 @@ namespace ClimateSensor
         // Configuration
         const static uint16_t configuration = (1 << MODE_BIT);
         static uint8_t configTx[] = {CONFIG_REG,                    // Write to config register
-                                    0x10,//(uint8_t)(configuration >> 8),  // Config MSB
-                                    0x00};//(uint8_t)configuration};        // Config LSB
+                                    (uint8_t)(configuration >> 8),  // Config MSB
+                                    (uint8_t)configuration};        // Config LSB
         const static uint8_t configLen = sizeof(configTx);
 
         // Requires at most 15 ms powerup

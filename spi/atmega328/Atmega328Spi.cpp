@@ -3,9 +3,9 @@
 #include "drivers/timer/Delay.hpp"
 #include <avr/interrupt.h>
 
-using namespace dio;
+using namespace Dio;
 
-namespace spi
+namespace Spi
 {
     void Atmega328Spi::SendByte(uint8_t data){ SPDR = data; }
     uint8_t Atmega328Spi::GetByte(){ return SPDR; }
@@ -191,10 +191,10 @@ namespace spi
 ISR(SPI_STC_vect)
 {
     uint8_t value = SPDR;
-    if (spi::SlaveReceiveHandler == nullptr) return;
+    if (Spi::SlaveReceiveHandler == nullptr) return;
 
-    if (spi::pIntSlaveSelect->read() == L_LOW)
+    if (Spi::pIntSlaveSelect->read() == L_LOW)
     {
-        spi::SlaveReceiveHandler(value);
+        Spi::SlaveReceiveHandler(value);
     }
 }

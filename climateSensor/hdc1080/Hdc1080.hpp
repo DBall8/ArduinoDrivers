@@ -11,7 +11,7 @@ namespace ClimateSensor
     class Hdc1080ClimateSensor : public IClimateSensor
     {
         public:
-            Hdc1080ClimateSensor(I2c::II2c* pI2c, ticCounter::TicCounter* pTicCounter);
+            Hdc1080ClimateSensor(I2c::II2c* pI2c, Tic::TicCounter* pTicCounter);
             ~Hdc1080ClimateSensor();
 
             bool initialize() override;
@@ -22,7 +22,7 @@ namespace ClimateSensor
 
         private:
             I2c::II2c* pI2c_;
-            softwareTimer::SoftwareTimer updateIntervalTimer_;
+            Timer::SoftwareTimer updateIntervalTimer_;
 
             float tempC_;
             float humidity_;

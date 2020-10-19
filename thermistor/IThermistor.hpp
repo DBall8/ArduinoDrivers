@@ -1,7 +1,7 @@
 #ifndef ITHERMISTOR_HPP
 #define ITHERMISTOR_HPP
 
-namespace ThermistorSpace{
+namespace Thermistor{
 
     class IThermistor{
         public:

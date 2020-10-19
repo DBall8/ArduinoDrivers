@@ -4,21 +4,18 @@
 #include "drivers/adc/IAdc.hpp"
 #include "utilities/filter/filter.hpp"
 
-namespace photoTransistor{
+class PhotoTransistor{
+    public:
+        PhotoTransistor(Adc::IAdc* pAdc, Filter::IFilter* pFilter);
+        ~PhotoTransistor(){}
 
-    class PhotoTransistor{
-        public:
-            PhotoTransistor(adc::IAdc* pAdc, filter::Filter* pFilter);
-            ~PhotoTransistor(){}
+        void update();
+        float getLightPercent();
 
-            void update();
-            float getLightPercent();
-
-        private:
-            adc::IAdc* pAdc_;
-            filter::Filter* pFilter_;
-    };
-}
+    private:
+        Adc::IAdc* pAdc_;
+        Filter::IFilter* pFilter_;
+};
 
 
 #endif

@@ -21,10 +21,10 @@ namespace Lcd
              * @param   dataPinArray    Array of pins for data bus
              * @param   numDataPins     Number of pins in pin array, suggested to be 4 or 8
              */ 
-            Dips082Lcd(dio::IDio* pRsPin,
-                    dio::IDio* pRwPin, 
-                    dio::IDio* pOePin, 
-                    dio::IDio** dataPinArray,
+            Dips082Lcd(Dio::IDio* pRsPin,
+                    Dio::IDio* pRwPin, 
+                    Dio::IDio* pOePin, 
+                    Dio::IDio** dataPinArray,
                     uint8_t numDataPins);
             ~Dips082Lcd();
 
@@ -65,10 +65,10 @@ namespace Lcd
             bool clear() override;
 
         private:
-            dio::IDio* pRsPin_;          // Register select pin, 0 = command, 1 = data
-            dio::IDio* pRwPin_;          // Read/write select pin, 0 = write, 1 = read
-            dio::IDio* pOePin_;          // Operation enable pin, starts an operation on the fallin edge
-            dio::IDio** dataPinArray_;   // Array of pins used to send data
+            Dio::IDio* pRsPin_;          // Register select pin, 0 = command, 1 = data
+            Dio::IDio* pRwPin_;          // Read/write select pin, 0 = write, 1 = read
+            Dio::IDio* pOePin_;          // Operation enable pin, starts an operation on the fallin edge
+            Dio::IDio** dataPinArray_;   // Array of pins used to send data
             uint8_t numDataPins_;        // Number of data pins, should be 4 or 8 typically
 
             uint8_t cursorCol_; // Cursor's current column, 0 indexed

@@ -2,10 +2,10 @@
 #define NRF24L01_HPP
 
 #include "drivers/radio/IRadio.hpp"
-#include "drivers/spi/SpiDriver.hpp"
+#include "drivers/spi/ISpi.hpp"
 #include "drivers/dio/IDio.hpp"
 
-namespace radio
+namespace Radio
 {
     enum DataSpeed: uint8_t
     {
@@ -32,8 +32,8 @@ namespace radio
     class Nrf24l01 : public IRadio
     {
         public:
-            Nrf24l01(dio::IDio* pCePin,
-                     spi::SpiDriver* pSpi,
+            Nrf24l01(Dio::IDio* pCePin,
+                     Spi::ISpi* pSpi,
                      DataSpeed dataSpeed = DataSpeed::RF_1_MBPS,
                      PaLevel paLevel = PaLevel::PA_LOW,
                      uint32_t transferDelayMicroS = 20);
@@ -117,8 +117,8 @@ namespace radio
             void stopListening();
 
         private:
-            dio::IDio* pCePin_;
-            spi::SpiDriver* pSpi_;
+            Dio::IDio* pCePin_;
+            Spi::ISpi* pSpi_;
             DataSpeed dataSpeed_;
             PaLevel paLevel_;
             uint32_t transferDelayMicroS_;

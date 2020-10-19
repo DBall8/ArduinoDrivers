@@ -4,13 +4,11 @@
 #include "TicCounter.hpp"
 #include <stdint.h>
 
-using namespace ticCounter;
-
-namespace softwareTimer{
+namespace Timer{
 
     class SoftwareTimer{
         public:
-            SoftwareTimer(uint32_t periodTics, TicCounter* pTicCounter);
+            SoftwareTimer(uint32_t periodTics, Tic::TicCounter* pTicCounter);
             ~SoftwareTimer();
 
             void enable();
@@ -26,7 +24,7 @@ namespace softwareTimer{
             void printDebug();
 
         private:
-            TicCounter* pTicCounter_;   // Tic tracker
+            Tic::TicCounter* pTicCounter_;   // Tic tracker
             uint32_t periodInTics_;     // Timer period
             bool isEnabled_;            
             uint16_t numPeriodsPassed_; // Number of periods passed since last call to hasPeriodPassed

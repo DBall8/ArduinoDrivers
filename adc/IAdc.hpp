@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 
-namespace adc
+namespace Adc
 {
     class IAdc
     {

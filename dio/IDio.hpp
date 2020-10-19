@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 
-namespace dio
+namespace Dio
 {
     enum Level: uint8_t
     {

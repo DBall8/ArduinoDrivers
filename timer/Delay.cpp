@@ -2,9 +2,9 @@
 #include "drivers/assert/Assert.hpp"
 #include "utilities/print/Print.hpp"
 
-ticCounter::TicCounter* Delay::pTicCounter_ = nullptr;
+Tic::TicCounter* Delay::pTicCounter_ = nullptr;
 
-void Delay::Initialize(ticCounter::TicCounter* pTicCounter)
+void Delay::Initialize(Tic::TicCounter* pTicCounter)
 {
     Delay::pTicCounter_ = pTicCounter;
 }
