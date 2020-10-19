@@ -4,12 +4,12 @@
 #include "drivers/button/IButton.hpp"
 #include "drivers/dio/IDio.hpp"
 
-namespace button
+namespace Button
 {
     class DigitalButton : public IButton
     {
         public:
-            DigitalButton(dio::IDio* pDio);
+            DigitalButton(Dio::IDio* pDio);
             ~DigitalButton();
 
             void update() override;
@@ -17,7 +17,7 @@ namespace button
             ButtonTransition getTransition() override;
 
         private:
-            dio::IDio* pDio_;
+            Dio::IDio* pDio_;
             ButtonState currentState_;
             ButtonState prevState_;
     };

@@ -2,8 +2,8 @@
 #include "drivers/timer/Delay.hpp"
 #include "utilities/print/Print.hpp"
 
-using namespace spi;
-using namespace dio;
+using namespace Spi;
+using namespace Dio;
 
 // Defined settings
 const static uint8_t ADDRESS_LEN = 5u;
@@ -99,10 +99,10 @@ enum ERX_BITS: uint8_t
     ERX_5
 };
 
-namespace radio
+namespace Radio
 {
     Nrf24l01::Nrf24l01(IDio* pCePin,
-                       SpiDriver* pSpi,
+                       ISpi* pSpi,
                        DataSpeed dataSpeed,
                        PaLevel paLevel,
                        uint32_t transferDelayMicroS):

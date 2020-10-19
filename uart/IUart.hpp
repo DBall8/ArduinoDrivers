@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace uart
+namespace Uart
 {
     class IUart
     {

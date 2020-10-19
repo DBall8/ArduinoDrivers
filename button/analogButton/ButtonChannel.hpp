@@ -6,12 +6,12 @@
 
 #include "drivers/adc/IAdc.hpp"
 
-namespace button
+namespace Button
 {
     class ButtonChannel
     {
         public:
-            ButtonChannel(adc::IAdc* pAdc, AnalogButton** buttonArray, uint8_t numButtons);
+            ButtonChannel(Adc::IAdc* pAdc, AnalogButton** buttonArray, uint8_t numButtons);
             ~ButtonChannel();
 
             void update();
@@ -21,7 +21,7 @@ namespace button
             AnalogButton** buttonArray_;
             uint8_t numButtons_;
 
-            adc::IAdc* pAdc_;
+            Adc::IAdc* pAdc_;
     };
 }
 

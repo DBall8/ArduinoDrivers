@@ -3,7 +3,7 @@
 
 #include "drivers/button/IButton.hpp"
 
-namespace button
+namespace Button
 {
     struct ValidRange
     {

@@ -1,7 +1,7 @@
 #include "Atmega328Adc.hpp"
 #include <avr/io.h>
 
-namespace adc
+namespace Adc
 {
     Atmega328Adc::Atmega328Adc(Atmega328Channel channel, Prescaler prescaler, Reference reference):
         channel_(channel),

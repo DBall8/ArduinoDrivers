@@ -6,7 +6,7 @@
 
 #include "drivers/adc/IAdc.hpp"
 
-namespace adc
+namespace Adc
 {
     enum Atmega328Channel: uint8_t
     {

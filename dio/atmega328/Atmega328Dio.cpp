@@ -3,7 +3,7 @@
 
 #include <avr/io.h>
 
-namespace dio
+namespace Dio
 {
     // PORT registers
     static volatile uint8_t* PORT_REGS[] = 

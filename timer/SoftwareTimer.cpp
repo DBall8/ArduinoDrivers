@@ -2,7 +2,9 @@
 
 #include "utilities/print/Print.hpp"
 
-namespace softwareTimer{
+using namespace Tic;
+
+namespace Timer{
 
     SoftwareTimer::SoftwareTimer(uint32_t periodInTics, TicCounter* pTicCounter):
         pTicCounter_(pTicCounter),

@@ -1,6 +1,6 @@
 #include "TicCounter.hpp"
 
-namespace ticCounter{
+namespace Tic{
 
     TicCounter::TicCounter(uint32_t ticsPerSecond):
         ticCount_(0),

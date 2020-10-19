@@ -5,9 +5,9 @@
 #include "drivers/timer/Delay.hpp"
 #include "drivers/dio/atmega328/Atmega328Dio.hpp"
 
-using namespace dio;
-using namespace interrupt;
-using namespace softwareTimer;
+using namespace Dio;
+using namespace Interrupt;
+using namespace Timer;
 
 #define PRINT_I2C
 

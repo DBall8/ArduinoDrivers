@@ -1,15 +1,15 @@
 #include "Tmp36.hpp"
 #include "utilities/Conversions.hpp"
 
-using namespace adc;
-using namespace filter;
+using namespace Adc;
+using namespace Filter;
 
 const static float V_TO_C_OFFSET = -0.5f;
 const static float V_TO_C_MULTIPLIER = 100.0f;
 
-namespace ThermistorSpace{
+namespace Thermistor{
 
-    Tmp36::Tmp36(IAdc* pAnalogPin, Filter* pFilter):
+    Tmp36::Tmp36(IAdc* pAnalogPin, IFilter* pFilter):
         pAnalogPin_(pAnalogPin),
         pFilter_(pFilter)
     {}

@@ -1,29 +1,26 @@
 #include "PhotoTransistor.hpp"
 
-using namespace adc;
-using namespace filter;
+using namespace Adc;
+using namespace Filter;
 
-namespace photoTransistor{
+const float MAX_ADC = 1023.0f;
 
-    const float MAX_ADC = 1023.0f;
+PhotoTransistor::PhotoTransistor(IAdc* pAdc, IFilter* pFilter):
+    pAdc_(pAdc),
+    pFilter_(pFilter)
+{
+    pAdc_->enable();
+}
 
-    PhotoTransistor::PhotoTransistor(IAdc* pAdc, Filter* pFilter):
-        pAdc_(pAdc),
-        pFilter_(pFilter)
-    {
-        pAdc_->enable();
-    }
+void PhotoTransistor::update(){
+    bool success;
 
-    void PhotoTransistor::update(){
-        bool success;
+    uint16_t reading = pAdc_->read(&success);
+    if (!success) return;
 
-        uint16_t reading = pAdc_->read(&success);
-        if (!success) return;
+    pFilter_->addSample((int)reading);
+}
 
-        pFilter_->addSample((int)reading);
-    }
-
-    float PhotoTransistor::getLightPercent(){
-        return (pFilter_->getValueInt() / MAX_ADC) * 100.0f;
-    }
+float PhotoTransistor::getLightPercent(){
+    return (pFilter_->getValueInt() / MAX_ADC) * 100.0f;
 }

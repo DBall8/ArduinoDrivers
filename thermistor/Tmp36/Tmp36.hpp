@@ -5,17 +5,18 @@
 #include "drivers/adc/IAdc.hpp"
 #include "utilities/filter/Filter.hpp"
 
-namespace ThermistorSpace{
+namespace Thermistor{
 
-    class Tmp36: public IThermistor{
+    class Tmp36: public IThermistor
+    {
         public:
-            Tmp36(adc::IAdc* pAnalogPin, filter::Filter* pFilter);
+            Tmp36(Adc::IAdc* pAnalogPin, Filter::IFilter* pFilter);
 
             float getTemperature() override;
 
         private:
-            adc::IAdc* pAnalogPin_;
-            filter::Filter* pFilter_;
+            Adc::IAdc* pAnalogPin_;
+            Filter::IFilter* pFilter_;
     };
 }
 #endif

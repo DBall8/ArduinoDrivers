@@ -2,9 +2,9 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-using namespace interrupt;
+using namespace Interrupt;
 
-namespace uart
+namespace Uart
 {
 
     const static char* BUFF_FULL_STR = "\r\nTX BUFF FULL\r\n";
@@ -152,11 +152,11 @@ namespace uart
 // USART RX complete interrupt
 ISR(USART_RX_vect)
 {
-    uart::Atmega328AsynchUart::HanleRxDataAvailable();
+    Uart::Atmega328AsynchUart::HanleRxDataAvailable();
 }
 
 // // USART Data Register Empty Interrupt
 ISR(USART_UDRE_vect)
 {
-    uart::Atmega328AsynchUart::HanleDataRegisterEmpty();
+    Uart::Atmega328AsynchUart::HanleDataRegisterEmpty();
 }
