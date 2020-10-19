@@ -399,7 +399,10 @@ namespace radio
     bool Nrf24l01::transmit(uint8_t* buff, uint8_t numBytes)
     {
         // Must have already called startTransmitting
-        if (status_ != RfStatus::TRANSMITTING) return false;
+        if (status_ != RfStatus::TRANSMITTING)
+        {
+            return false;
+        }
 
         pSpi_->selectSlave();
 
@@ -422,7 +425,7 @@ namespace radio
         // Pulse CE high to start transmission
         pCePin_->set(L_HIGH);
         DELAY_MICROSECONDS(150);
-         pCePin_->set(L_LOW);
+        pCePin_->set(L_LOW);
 
         uint8_t completionMask = (1 << TX_DS) | (1 << MAX_RT);
 

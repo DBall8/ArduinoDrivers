@@ -12,8 +12,8 @@ namespace timer{
     };
     
     enum TimerMode{
-        NORMAL, // Normal counting
-        CTC     // Clear Timer on Capture
+        NORMAL,             // Normal counting
+        CTC,                // Clear Timer on Capture
     };
 
     enum TimerPrescaler: uint8_t
