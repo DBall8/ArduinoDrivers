@@ -177,7 +177,7 @@ namespace Radio
         }
 
         char address[ADDRESS_LEN+1] = "00000";
-        address[ADDRESS_LEN-1] = (char)listenerId;
+        address[ADDRESS_LEN-1] += (char)listenerId;
         startTransmitting(address);
 
         status_ = RfStatus::TRANSMITTING;
@@ -195,9 +195,11 @@ namespace Radio
             stop();
         }
 
-        uint8_t pipeNum = listenerId % NUM_RX_PIPES;
+        // TODO - currently only supporting reception from a single transmitter,
+        // so always use pipe 0
+        uint8_t pipeNum = 0;
         char address[ADDRESS_LEN+1] = "00000";
-        address[ADDRESS_LEN-1] = (char)listenerId;
+        address[ADDRESS_LEN-1] += (char)listenerId;
         startListening(pipeNum, address);
 
         status_ = RfStatus::RECEIVING;
@@ -304,7 +306,10 @@ namespace Radio
         // Send the command followed by the value
         pSpi_->selectSlave();
         pSpi_->transfer(command, transferDelayMicroS_);
-        pSpi_->write(buff, numValues, transferDelayMicroS_);
+        for (uint8_t i=0; i<numValues; i++)
+        {
+            pSpi_->transfer(buff[i], transferDelayMicroS_);
+        }
         pSpi_->releaseSlave();
     }
 
@@ -317,7 +322,10 @@ namespace Radio
         // from the second transfer
         pSpi_->selectSlave();
         pSpi_->transfer(command, transferDelayMicroS_);
-        pSpi_->read(buff, numValues, transferDelayMicroS_);
+        for (uint8_t i=0; i<numValues; i++)
+        {
+            buff[i] = pSpi_->transfer(NOP, transferDelayMicroS_);
+        }
         pSpi_->releaseSlave();
     }
 
@@ -474,7 +482,7 @@ namespace Radio
 
         flush();
 
-         pCePin_->set(L_HIGH);
+        pCePin_->set(L_HIGH);
 
         DELAY_MICROSECONDS(150);
 

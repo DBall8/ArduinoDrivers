@@ -40,8 +40,10 @@ namespace Timer{
     }
 
     void SoftwareTimer::setPeriod(uint32_t periodInTics){
-        if (!isEnabled_){
-            periodInTics_ = periodInTics;
+        periodInTics_ = periodInTics;
+
+        if (isEnabled_){
+            reset();
         }
     }
 
