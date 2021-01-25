@@ -54,6 +54,14 @@ namespace Dio
             bool set(Level level) override;
 
             /**
+             * Sets the output level of the digital IO
+             * Lightweight version for timing critical operations, sets raw value
+             * 
+             * @param   level   Sets low if 0, high if not 0
+             */
+            void set(uint8_t level) override;
+
+            /**
              * Toggles the output of the pin, if it was HIGH it becomes LOW
              * and vice versa
              * 
@@ -68,6 +76,19 @@ namespace Dio
              */
             Level read() override;
 
+            /**
+             * Enable pin change interrupts for this pin
+             * IMPORTANT: Currently only one interrupt handler can be set per PORT
+             * Any logic to differentiate between different pins must be inside the interrupt handler
+             * @param pIntHandler Pointer to the function to run on interrupt, or nullptr to not set a function
+             */
+            void enableInterrupt(void (*pIntHandler)(void) = nullptr) override;
+
+            /**
+             * Disable pin change interrupts for this pin
+             */
+            void disableInterrupt() override;
+
         private:
             Port port_;
             uint8_t pin_;
@@ -80,6 +101,8 @@ namespace Dio
              * @param   mode    The mode to set the pin to
              */
             void setDirection(Mode mode);
+
+            static uint8_t getPcintNumber(Port port, uint8_t pin);
     };
 }
 

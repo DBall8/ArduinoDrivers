@@ -1,11 +1,11 @@
 #ifndef ATMEGA328_ASYNCH_UART_HPP
 #define ATMEGA328_ASYNCH_UART_HPP
 
-#include "drivers/uart/atmega328/Atmega328Uart.hpp"
+#include "drivers/serial/atmega328/Atmega328Uart.hpp"
 #include "utilities/circular_queue/CircularQueue.hpp"
 #include "drivers/interrupt/IInterrupt.hpp"
 
-namespace Uart
+namespace Serial
 {
     class Atmega328AsynchUart : public Atmega328Uart
     {

@@ -1,11 +1,18 @@
-#ifndef IUART_HPP
-#define IUART_HPP
+#ifndef ISERIAL_HPP
+#define ISERIAL_HPP
 
 #include <stdint.h>
 
-namespace Uart
+namespace Serial
 {
-    class IUart
+    enum BaudRate: uint8_t
+    {
+        BAUD_9600 = 0,
+        BAUD_115200,
+        NUM_BAUD_RATES
+    };
+
+    class ISerial
     {
         public:
             virtual void initialize(){};

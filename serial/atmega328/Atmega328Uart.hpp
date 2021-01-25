@@ -1,18 +1,11 @@
 #ifndef ATMEGA328_UART_HPP
 #define ATMEGA328_UART_HPP
 
-#include "drivers/uart/IUart.hpp"
+#include "drivers/serial/ISerial.hpp"
 
-namespace Uart
+namespace Serial
 {
-    enum BaudRate: uint8_t
-    {
-        BAUD_9600 = 0,
-        BAUD_115200,
-        NUM_BAUD_RATES
-    };
-
-    class Atmega328Uart : public IUart
+    class Atmega328Uart : public ISerial
     {
         public:
             Atmega328Uart(BaudRate baudRate, uint32_t fCpu, bool enableParity = false, bool polarity = false);

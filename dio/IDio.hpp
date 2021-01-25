@@ -19,8 +19,12 @@ namespace Dio
     {
         public:
             virtual bool set(Level level) = 0;
+            virtual void set(uint8_t level){ set(level ? Level::L_HIGH : Level::L_LOW);};
             virtual bool toggle() = 0;
             virtual Level read() = 0;
+
+            virtual void enableInterrupt(void (*pIntHandler)(void) = nullptr) {}
+            virtual void disableInterrupt() {}
     };
 }
 
