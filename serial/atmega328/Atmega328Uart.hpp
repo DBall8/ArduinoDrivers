@@ -14,7 +14,7 @@ namespace Serial
             virtual void initialize() override;
 
             // Blocking write
-            virtual void write(uint8_t* buff, uint16_t numBytes) override;
+            virtual void write(const uint8_t* buff, uint16_t numBytes) override;
 
             // Blocking read
             virtual uint16_t read(uint8_t* buff, uint16_t numBytes) override;

@@ -60,7 +60,7 @@ namespace Serial
         UCSR0C = ucsrc;
     }
 
-    void Atmega328AsynchUart::write(uint8_t* buff, uint16_t numBytes)
+    void Atmega328AsynchUart::write(const uint8_t* buff, uint16_t numBytes)
     {
         // If the tx buffer is full, don't add any more data to write until
         // it empties again
@@ -75,7 +75,7 @@ namespace Serial
 
         // Add data to tx buffer
         bool buffFull = false;
-        pInterruptControl_->disableInterrupts();
+        pInterruptControl_->pauseInterrupts();
         for (uint16_t i=0; i<numBytes; i++)
         {
             if (txBuffer_.length() >= (txLength_ - BUFF_FULL_LEN))
@@ -92,6 +92,7 @@ namespace Serial
         {
             // Buffer is full, put the warning string at the end to show that it overfilled
             txBufferFull_ = true;
+            txBuffer_.flush();
             for (uint16_t i=0; i<BUFF_FULL_LEN; i++)
             {
                 txBuffer_.push(BUFF_FULL_STR[i]);
@@ -104,7 +105,7 @@ namespace Serial
             UDR0 = txBuffer_.pop();
         }
 
-        pInterruptControl_->enableInterrupts();
+        pInterruptControl_->resumeInterrupts();
     }
 
     uint16_t Atmega328AsynchUart::read(uint8_t* buff, uint16_t numBytes)

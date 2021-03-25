@@ -2,6 +2,8 @@
 #include "drivers/assert/Assert.hpp"
 #include <avr/io.h>
 
+#include "utilities/print/Print.hpp"
+
 namespace Serial
 {
     const static uint32_t baudRates[] =
@@ -44,7 +46,7 @@ namespace Serial
         UCSR0C = ucsrc;
     }
 
-    void Atmega328Uart::write(uint8_t* buff, uint16_t numBytes)
+    void Atmega328Uart::write(const uint8_t* buff, uint16_t numBytes)
     {
         for (uint16_t i=0; i<numBytes; i++)
         {

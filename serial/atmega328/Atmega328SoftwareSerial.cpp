@@ -88,7 +88,7 @@ namespace Serial
         return dataAvailable_;
     }
 
-    void Atmega328SoftwareSerial::write(uint8_t* buff, uint16_t numBytes)
+    void Atmega328SoftwareSerial::write(const uint8_t* buff, uint16_t numBytes)
     {
         // Write each byte out, this is a blocking write
         for (uint16_t i=0; i<numBytes; i++)
@@ -127,7 +127,7 @@ namespace Serial
         // Notify if an rx overflow event occurred
         if (rxOverflow_)
         {
-            PRINTLN("Software serial received too many bytes, dropped some.");
+            PRINTLN("SS Overflow");
             rxOverflow_ = false;
         }
 
@@ -137,6 +137,7 @@ namespace Serial
     void Atmega328SoftwareSerial::flush()
     {
         rxBuffer_.flush();
+        dataAvailable_ = false;
     }
 
     void Atmega328SoftwareSerial::writeByte(uint8_t byte)
@@ -185,6 +186,18 @@ namespace Serial
 
             accurateDelay(rxInterBitQuadCycles_);
         }
+
+        // Do not save byte if our buffer is full, but instead set overflow flag
+        if (rxBuffer_.isFull())
+        {
+            rxOverflow_ = true;
+        }
+        else
+        {
+            // Store new byte
+            rxBuffer_.push(data);
+            dataAvailable_ = true;
+        }
         
         // Ensure we have stopped
         while (pRxPin_->read() == L_LOW)
@@ -192,17 +205,6 @@ namespace Serial
 
         // Re-enable interrupts, timing critical region has ended
         pIntControl_->resumeInterrupts();
-
-        // Do not save byte if our buffer is full, but instead set overflow flag
-        if (rxBuffer_.isFull())
-        {
-            rxOverflow_ = true;
-            return;
-        }
-
-        // Store new byte
-        rxBuffer_.push(data);
-        dataAvailable_ = true;
     }
 
     void Atmega328SoftwareSerial::handleRxInterrupt()

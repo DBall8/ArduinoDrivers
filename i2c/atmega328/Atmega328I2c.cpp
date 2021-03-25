@@ -307,9 +307,6 @@ namespace I2c
         uint8_t status = getStatus();
         if (status != successCode)
         {
-#ifdef PRINT_I2C
-            PRINTLN("I2C data reception failed, status = 0x%x", status);
-#endif
             return false;
         }
 
@@ -338,9 +335,6 @@ namespace I2c
             if ((pTimeoutTimer_ != nullptr) && 
                 pTimeoutTimer_->hasOneShotPassed())
             {
-#ifdef PRINT_I2C
-                PRINTLN("I2c timeout timer elapsed.");
-#endif
                 pTimeoutTimer_->disable();
                 return false;
             }

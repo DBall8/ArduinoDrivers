@@ -52,7 +52,7 @@ namespace Serial
              * @param   buff        Buffer of data to transmit
              * @param   numBytes    Number of bytes to transmit
              */
-            void write(uint8_t* buff, uint16_t numBytes) override;
+            void write(const uint8_t* buff, uint16_t numBytes) override;
 
             /**
              * Read data that has been received

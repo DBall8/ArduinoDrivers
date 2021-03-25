@@ -3,11 +3,15 @@
 #include "utilities/print/Print.hpp"
 
 using namespace Tic;
+using namespace Watchdog;
 
 namespace Timer{
 
-    SoftwareTimer::SoftwareTimer(uint32_t periodInTics, TicCounter* pTicCounter):
+    SoftwareTimer::SoftwareTimer(uint32_t periodInTics,
+                                 TicCounter* pTicCounter,
+                                 IWatchdog* pWdt):
         pTicCounter_(pTicCounter),
+        pWdt_(pWdt),
         periodInTics_(periodInTics),
         isEnabled_(false),
         numPeriodsPassed_(0),
@@ -52,6 +56,7 @@ namespace Timer{
     }
 
     bool SoftwareTimer::hasPeriodPassed(){
+        if (!isEnabled_) return false;
         update();
         bool hasPeriodPassed = numPeriodsPassed_ > 0;
 
@@ -66,6 +71,7 @@ namespace Timer{
     }
 
     bool SoftwareTimer::hasOneShotPassed(){
+        if (!isEnabled_) return false;
         update();
 
         return hasOneShotPassed_;
@@ -82,6 +88,9 @@ namespace Timer{
 
         // If period hasn't passed, check if it has
         numPeriodsPassed_ += (currentTic - prevPeriodTic_) / periodInTics_;
+
+        // Nourish watchdog if one was given
+        if (pWdt_ != nullptr) pWdt_->reset();
 
         // if (hasPeriodPassed_)
         // {

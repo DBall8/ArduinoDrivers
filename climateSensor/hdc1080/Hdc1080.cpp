@@ -71,7 +71,6 @@ namespace ClimateSensor
         if (!pI2c_->transmit(SLAVE_ID, TEMP_REG))
         {
             // Failed to trigger measurement
-            PRINTLN("Measurement trigger failed");
             return false;
         }
 
@@ -82,7 +81,6 @@ namespace ClimateSensor
         if (!pI2c_->receive(SLAVE_ID, readBuffer, NUM_CLIMATE_BYTES))
         {
             // Failed to read measurements
-            PRINTLN("Reading measurement failed");
             return false;
         }
 

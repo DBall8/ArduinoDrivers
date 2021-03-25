@@ -48,7 +48,7 @@ namespace Serial
              * @param   buff        Buffer containing new data to write
              * @param   numBytes    Number of bytes in buff
              */
-            virtual void write(uint8_t* buff, uint16_t numBytes) override;
+            virtual void write(const uint8_t* buff, uint16_t numBytes) override;
 
             /**
              * Non-blocking read, retrieves any data read and buffered from the uart

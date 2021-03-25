@@ -9,6 +9,8 @@ static void assert(bool val, const char* text = nullptr)
     if (val) return;
 
     PRINT("Assert failed");
+
+#ifdef PRINT_ASSERT
     if (text != nullptr)
     {
         PRINT(": ");
@@ -16,6 +18,7 @@ static void assert(bool val, const char* text = nullptr)
     }
 
     PRINTLN(".");
+#endif
 
     // Flush uart before entering busy loop
     PRINT_FLUSH();
