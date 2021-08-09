@@ -9,8 +9,6 @@ using namespace Dio;
 using namespace Interrupt;
 using namespace Timer;
 
-#define PRINT_I2C
-
 namespace I2c
 {
     // Mask for the status bits from the status register
@@ -222,7 +220,7 @@ namespace I2c
         uint8_t status = getStatus();
 
 #ifdef PRINT_I2C
-        if (status != START_SENT) PRINTLN("I2C Start failed, status = 0x%x", status);
+        if (status != START_SENT) PRINTLN("SF, status = 0x%x", status);
 #endif
 
         return (status == START_SENT);
@@ -261,7 +259,7 @@ namespace I2c
         uint8_t status = getStatus();
 
 #ifdef PRINT_I2C
-        if (status != successCode) PRINTLN("I2C Slave ID transmission failed, status = 0x%x", status);
+        if (status != successCode) PRINTLN("IDF, status = 0x%x", status);
 #endif
 
         return (status == successCode);
@@ -280,7 +278,7 @@ namespace I2c
         uint8_t status = getStatus();
 
 #ifdef PRINT_I2C
-        if (status != DATA_SENT) PRINTLN("I2C data transmission failed, status = 0x%x", status);
+        if (status != DATA_SENT) PRINTLN("DTF, status = 0x%x", status);
 #endif
         return (status == DATA_SENT);
     }

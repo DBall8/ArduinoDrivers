@@ -2,9 +2,6 @@
 #include "drivers/timer/Delay.hpp"
 #include "utilities/Conversions.hpp"
 
-// TODO remove
-#include "utilities/print/Print.hpp"
-
 using namespace I2c;
 using namespace Timer;
 using namespace Tic;

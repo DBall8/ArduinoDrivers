@@ -3,10 +3,12 @@
 #include "utilities/print/Print.hpp"
 
 Tic::TicCounter* Delay::pTicCounter_ = nullptr;
+Watchdog::IWatchdog* Delay::pWdt_ = nullptr;
 
-void Delay::Initialize(Tic::TicCounter* pTicCounter)
+void Delay::Initialize(Tic::TicCounter* pTicCounter, Watchdog::IWatchdog* pWdt)
 {
     Delay::pTicCounter_ = pTicCounter;
+    Delay::pWdt_ = pWdt;
 }
 
 void Delay::delay(uint32_t milliseconds)
@@ -32,6 +34,11 @@ void Delay::delay(uint32_t milliseconds)
         if (currentTic - startTic >= ticsToDelay)
         {
             break;
+        }
+
+        if (pWdt_ != nullptr)
+        {
+            Delay::pWdt_->reset();
         }
     }
 

@@ -3,7 +3,7 @@
 
 #include "drivers/serial/ISerial.hpp"
 
-namespace Serial
+namespace SerialComm
 {
     class Atmega328Uart : public ISerial
     {

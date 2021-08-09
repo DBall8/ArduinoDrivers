@@ -7,7 +7,7 @@
 using namespace Dio;
 using namespace Interrupt;
 
-namespace Serial
+namespace SerialComm
 {
     const static uint8_t WRITE_BIT_CPU_CYCLES = 86; // CPU cycles taken to write a bit value to a pin
 

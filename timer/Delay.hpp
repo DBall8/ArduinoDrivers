@@ -2,6 +2,7 @@
 #define DELAY_HPP
 
 #include "TicCounter.hpp"
+#include "drivers/watchdog/Watchdog.hpp"
 
 #define DELAY(x) Delay::delay(x)
 #define DELAY_MICROSECONDS(x) Delay::delayMicroseconds(x)
@@ -15,7 +16,7 @@ class Delay
          * 
          * @param   pTicCounter Pointer to a tic counter to use for delaying
          */
-        static void Initialize(Tic::TicCounter* pTicCounter);
+        static void Initialize(Tic::TicCounter* pTicCounter, Watchdog::IWatchdog* pWdt = nullptr);
 
         /**
          * Pause for some time
@@ -27,6 +28,7 @@ class Delay
 
     private:
         static Tic::TicCounter* pTicCounter_;
+        static Watchdog::IWatchdog* pWdt_;
 };
 
 #endif

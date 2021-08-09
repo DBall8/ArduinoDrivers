@@ -4,7 +4,7 @@
 
 using namespace Interrupt;
 
-namespace Serial
+namespace SerialComm
 {
 
     const static char* BUFF_FULL_STR = "\r\nTX BUFF FULL\r\n";
@@ -166,11 +166,11 @@ namespace Serial
 // USART RX complete interrupt
 ISR(USART_RX_vect)
 {
-    Serial::Atmega328AsynchUart::HanleRxDataAvailable();
+    SerialComm::Atmega328AsynchUart::HanleRxDataAvailable();
 }
 
 // // USART Data Register Empty Interrupt
 ISR(USART_UDRE_vect)
 {
-    Serial::Atmega328AsynchUart::HanleDataRegisterEmpty();
+    SerialComm::Atmega328AsynchUart::HanleDataRegisterEmpty();
 }

@@ -11,7 +11,7 @@
 
 #include "utilities/circular_queue/CircularQueue.hpp"
 
-namespace Serial
+namespace SerialComm
 {
     class Atmega328SoftwareSerial : public ISerial
     {

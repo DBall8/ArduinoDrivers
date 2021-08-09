@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace Serial
+namespace SerialComm
 {
     enum BaudRate: uint8_t
     {

@@ -5,7 +5,7 @@
 #include "utilities/circular_queue/CircularQueue.hpp"
 #include "drivers/interrupt/IInterrupt.hpp"
 
-namespace Serial
+namespace SerialComm
 {
     class Atmega328AsynchUart : public Atmega328Uart
     {

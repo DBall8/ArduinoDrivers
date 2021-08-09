@@ -4,7 +4,7 @@
 
 #include "utilities/print/Print.hpp"
 
-namespace Serial
+namespace SerialComm
 {
     const static uint32_t baudRates[] =
     {
