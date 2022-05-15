@@ -142,7 +142,15 @@ namespace Dio
 
     bool Atmega328Dio::toggle()
     {
-        *PIN_REGS[static_cast<uint8_t>(port_)] |= (0x01 << pin_);
+        //*PIN_REGS[static_cast<uint8_t>(port_)] |= (0x01 << pin_);
+        if (*PORT_REGS[static_cast<uint8_t>(port_)] & (0x01 << pin_))
+        {
+            set(L_LOW);
+        }
+        else
+        {
+            set(L_HIGH);
+        }
         return true;
     }
 
