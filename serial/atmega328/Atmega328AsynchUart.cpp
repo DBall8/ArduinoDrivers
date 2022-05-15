@@ -136,12 +136,15 @@ namespace SerialComm
         bool intEnabled = pInterruptControl_->areInterruptsEnabled();
         pInterruptControl_->enableInterrupts();
 
-        while (isDataAvailable())
-        {
-            // Busy loop until all data has been written to uart
-        }
+        rxBuffer_.flush();
+        txBuffer_.flush();
 
         if (intEnabled) pInterruptControl_->enableInterrupts();
+    }
+
+    void Atmega328AsynchUart::flushRx()
+    {
+        rxBuffer_.flush();
     }
 
     void Atmega328AsynchUart::HanleDataRegisterEmpty()

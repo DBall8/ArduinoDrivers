@@ -51,6 +51,16 @@ namespace Timer{
         }
     }
 
+    void SoftwareTimer::setPeriodMs(uint32_t periodInMs)
+    {
+        setPeriod(pTicCounter_->msecondsToTics(periodInMs));
+    }
+
+    void SoftwareTimer::setPeriodS(uint32_t periodInS)
+    {
+        setPeriod(pTicCounter_->secondsToTics(periodInS));
+    }
+
     bool SoftwareTimer::isEnabled(){
         return isEnabled_;
     }
@@ -78,6 +88,7 @@ namespace Timer{
     }
 
     void SoftwareTimer::update(){
+
         uint32_t currentTic = pTicCounter_->getTicCount();
 
         // If one shot hasn't passed, check if it now has

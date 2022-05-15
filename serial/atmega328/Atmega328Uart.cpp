@@ -15,12 +15,17 @@ namespace SerialComm
     const uint32_t BAUD_DIVISOR = 16;
     const uint32_t DOUBLE_BAUD_DIVISOR = 8;
 
-    Atmega328Uart::Atmega328Uart(BaudRate baudRate, uint32_t fCpu, bool enableParity, bool polarity):
+    Atmega328Uart::Atmega328Uart(BaudRate baudRate,
+                                 uint32_t fCpu,
+                                 bool enableParity,
+                                 bool polarity,
+                                 Timer::SoftwareTimer* pTimeoutTimer = nullptr):
         baudRate_(baudRate),
         fCpu_(fCpu),
         enableParity_(enableParity),
         polarity_(polarity)
     {
+        setTimeoutTimer(pTimeoutTimer);
     }
 
     Atmega328Uart::~Atmega328Uart()
