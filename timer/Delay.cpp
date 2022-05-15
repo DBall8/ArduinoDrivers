@@ -15,7 +15,7 @@ void Delay::delay(uint32_t milliseconds)
 {
     if (Delay::pTicCounter_ == nullptr)
     {
-		assert(false, "Delay driver not initialized");
+		assertCustom(false, "Delay driver not initialized");
         return;
     }
 

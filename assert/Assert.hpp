@@ -3,7 +3,7 @@
 
 #include "utilities/print/Print.hpp"
 
-static void assert(bool val, const char* text = nullptr)
+static void assertCustom(bool val, const char* text = nullptr)
 {
 
     if (val) return;
@@ -28,5 +28,4 @@ static void assert(bool val, const char* text = nullptr)
         // Infinite loop
     }
 }
-
 #endif

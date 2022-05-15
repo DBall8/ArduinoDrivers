@@ -16,7 +16,7 @@ namespace Eeprom
         currIndex_(0)
     {
         pShadowCopy_ = (uint8_t*)malloc(dataLength_);
-        assert(pShadowCopy_ != nullptr);
+        assertCustom(pShadowCopy_ != nullptr);
     }
 
     bool EepromManager::initialize()

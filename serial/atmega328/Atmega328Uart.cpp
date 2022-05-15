@@ -72,7 +72,7 @@ namespace SerialComm
 
     void Atmega328Uart::setBaudRate(BaudRate baudRate, uint32_t fCpu)
     {
-        assert(baudRate < BaudRate::NUM_BAUD_RATES);
+        assertCustom(baudRate < BaudRate::NUM_BAUD_RATES);
 
         uint32_t baud = baudRates[static_cast<uint8_t>(baudRate)];
         uint32_t ubrr = 0;

@@ -85,7 +85,7 @@ namespace Watchdog
         }
 
         // Cannot set a timeout this long
-        assert(false, "Cannot set watchdog timeout this high.");
+        assertCustom(false, "Cannot set watchdog timeout this high.");
     }
 
     void Atmega328Watchdog::reset()

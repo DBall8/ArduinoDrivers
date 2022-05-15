@@ -67,7 +67,7 @@ namespace SerialComm
         // Set up interrupt for receiving
 
         // Add this object to the static array for handling RX interrupts
-        assert(numActiveSerialConns < MAX_NUM_SOFT_SERIAL);
+        assertCustom(numActiveSerialConns < MAX_NUM_SOFT_SERIAL);
         activeSerialConns[numActiveSerialConns] = this;
         numActiveSerialConns++;
 

@@ -73,17 +73,17 @@ namespace Timer{
             case TIMER_0:
             {
                 // Must be 8 bit
-                assert(top_ < 0x100);
+                assertCustom(top_ < 0x100);
 
                 // Must be a supported prescaler
-                assert(PRESCALE_VALUE[prescaler_] > 0);
+                assertCustom(PRESCALE_VALUE[prescaler_] > 0);
                 break;
             }
 
             case TIMER_1:
             {
                 // Must be a supported prescaler
-                assert(PRESCALE_VALUE[prescaler_] > 0);
+                assertCustom(PRESCALE_VALUE[prescaler_] > 0);
                 break;
             }
 
@@ -91,10 +91,10 @@ namespace Timer{
             case TIMER_2:
             {
                 // Must be 8 bit
-                assert(top_ < 0x100);
+                assertCustom(top_ < 0x100);
 
                 // Must be a supported prescaler
-                assert(PRESCALE_VALUE_TIM2[prescaler_] > 0);
+                assertCustom(PRESCALE_VALUE_TIM2[prescaler_] > 0);
                 break;
             }
         }

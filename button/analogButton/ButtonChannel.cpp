@@ -25,7 +25,7 @@ namespace Button
 
     AnalogButton* ButtonChannel::getButton(uint8_t index)
     {
-        assert(index < numButtons_);
+        assertCustom(index < numButtons_);
         
         return buttonArray_[index];
     }

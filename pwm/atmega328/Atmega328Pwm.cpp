@@ -38,8 +38,8 @@ namespace Pwm
             }
         }
 
-        assert(pPwmInfo_ != nullptr, "Invalid PWM pin.");
-        assert(mode != PwmMode::PHASE_CORRECT, "Phase correct PWM not yet supported.");
+        assertCustom(pPwmInfo_ != nullptr, "Invalid PWM pin.");
+        assertCustom(mode != PwmMode::PHASE_CORRECT, "Phase correct PWM not yet supported.");
 
         // Set up the corresponding pin as an output
         Atmega328Dio pwmPin(port, pin, Dio::Mode::OUTPUT, Level::L_LOW, false, false);
@@ -57,7 +57,7 @@ namespace Pwm
             }
             else
             {
-                assert(false, "Only 8 bit PWM supported for this pin.");
+                assertCustom(false, "Only 8 bit PWM supported for this pin.");
             }
 
             if (pPwmInfo_->channel == PwmChannel::CHANNEL_A)
@@ -118,7 +118,7 @@ namespace Pwm
             }
             else
             {
-                assert(false, "Only 8 bit PWM supported for this pin.");
+                assertCustom(false, "Only 8 bit PWM supported for this pin.");
             }
 
             if (pPwmInfo_->channel == PwmChannel::CHANNEL_A)
