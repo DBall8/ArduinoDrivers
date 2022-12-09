@@ -204,8 +204,8 @@ namespace SerialComm
         }
         
         // Ensure we have stopped
-        while (pRxPin_->read() == L_LOW)
-        {}
+        // while (pRxPin_->read() == L_LOW)
+        // {}
 
         // Re-enable interrupts, timing critical region has ended
         pIntControl_->resumeInterrupts();
