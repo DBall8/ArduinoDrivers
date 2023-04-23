@@ -64,6 +64,8 @@ namespace SerialComm
              */
             void flush() override;
 
+            void flushRx() override;
+
             /**
              * Callback for the Data Register Empty interrupt
              */

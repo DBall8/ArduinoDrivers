@@ -20,6 +20,8 @@ namespace Timer{
             void reset();
 
             void setPeriod(uint32_t periodInTics);
+            void setPeriodMs(uint32_t periodInMs);
+            void setPeriodS(uint32_t periodInS);
 
             bool isEnabled();
             bool hasPeriodPassed();

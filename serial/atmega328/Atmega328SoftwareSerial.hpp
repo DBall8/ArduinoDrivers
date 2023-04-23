@@ -8,6 +8,7 @@
 #include "drivers/serial/ISerial.hpp"
 #include "drivers/dio/IDio.hpp"
 #include "drivers/interrupt/IInterrupt.hpp"
+#include "drivers/timer/SoftwareTimer.hpp"
 
 #include "utilities/circular_queue/CircularQueue.hpp"
 
@@ -32,7 +33,8 @@ namespace SerialComm
                                     uint32_t baudRate,
                                     uint32_t fCpu,
                                     uint8_t* rxBuffer,
-                                    uint16_t rxBufferLen);
+                                    uint16_t rxBufferLen,
+                                    Timer::SoftwareTimer* pTimeoutTimer = nullptr);
 
             ~Atmega328SoftwareSerial(){}
 

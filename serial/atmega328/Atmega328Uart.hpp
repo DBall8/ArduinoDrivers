@@ -8,7 +8,11 @@ namespace SerialComm
     class Atmega328Uart : public ISerial
     {
         public:
-            Atmega328Uart(BaudRate baudRate, uint32_t fCpu, bool enableParity = false, bool polarity = false);
+            Atmega328Uart(BaudRate baudRate,
+                          uint32_t fCpu,
+                          bool enableParity = false,
+                          bool polarity = false,
+                          Timer::SoftwareTimer* pTimeoutTimer = nullptr);
             ~Atmega328Uart();
 
             virtual void initialize() override;

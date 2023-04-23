@@ -6,6 +6,7 @@
 
 using namespace Dio;
 using namespace Interrupt;
+using namespace Timer;
 
 namespace SerialComm
 {
@@ -33,7 +34,8 @@ namespace SerialComm
                                                      uint32_t baudRate,
                                                      uint32_t fCpu,
                                                      uint8_t* rxBuffer,
-                                                     uint16_t rxBufferLen) :
+                                                     uint16_t rxBufferLen,
+                                                     SoftwareTimer* pTimeoutTimer) :
         rxBuffer_(rxBuffer, rxBufferLen),
         pRxPin_(pRxPin),
         pTxPin_(pTxPin),
@@ -60,6 +62,8 @@ namespace SerialComm
         if (rxCenteringQuadCycles_ < 0) rxCenteringQuadCycles_ = 0;
         if (rxInterBitQuadCycles_ < 0) rxInterBitQuadCycles_ = 0;
         if (txDelayQuadCycles_ < 0) txDelayQuadCycles_ = 0;
+
+        setTimeoutTimer(pTimeoutTimer);
     }
 
     void Atmega328SoftwareSerial::initialize()
@@ -200,8 +204,8 @@ namespace SerialComm
         }
         
         // Ensure we have stopped
-        while (pRxPin_->read() == L_LOW)
-        {}
+        // while (pRxPin_->read() == L_LOW)
+        // {}
 
         // Re-enable interrupts, timing critical region has ended
         pIntControl_->resumeInterrupts();

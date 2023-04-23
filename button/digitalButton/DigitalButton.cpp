@@ -1,12 +1,14 @@
 #include "DigitalButton.hpp"
 
 using namespace Dio;
+using namespace Timer;
 
 namespace Button
 {
-    DigitalButton::DigitalButton(IDio* pDio)
+    DigitalButton::DigitalButton(IDio* pDio, SoftwareTimer* pDebounceTimer)
     {
         pDio_ = pDio;
+        pDebounceTimer_ = pDebounceTimer;
         currentState_ = ButtonState::INVALID;
         prevState_ = ButtonState::INVALID;
     }
@@ -18,9 +20,25 @@ namespace Button
         prevState_ = currentState_;
 
         Level reading = pDio_->read();
-        currentState_ = (reading == Level::L_HIGH) ?
+        ButtonState actualState = (reading == Level::L_HIGH) ?
                         ButtonState::PRESSED :
                         ButtonState::NOT_PRESSED;
+
+        if (pDebounceTimer_ != nullptr)
+        {
+            if (pDebounceTimer_->isEnabled() && !pDebounceTimer_->hasOneShotPassed())
+            {
+                // Do not upate current stateuntil the debounce timer has finished
+                return;
+            }
+            else if ((actualState == ButtonState::PRESSED) &&
+                (prevState_ != ButtonState::PRESSED))
+            {
+                pDebounceTimer_->enable();
+            }
+        }
+
+        currentState_ = actualState;
     }
 
     ButtonState DigitalButton::getState()

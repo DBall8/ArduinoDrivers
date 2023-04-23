@@ -1,11 +1,10 @@
 #ifndef ATMEGA328_TIMER_HPP
 #define ATMEGA328_TIMER_HPP
 
-#include <stdint.h>
+#include "drivers/timer/ITimer.hpp"
 
 namespace Timer
 {
-
     enum Timer{
         TIMER_0 = 0,
         TIMER_1,
@@ -17,25 +16,11 @@ namespace Timer
         CTC,                // Clear Timer on Capture
     };
 
-    enum TimerPrescaler: uint8_t
-    {
-        PRESCALE_OFF = 0,
-        PRESCALE_1,
-        PRESCALE_8,
-        PRESCALE_32,
-        PRESCALE_64,
-        PRESCALE_128,
-        PRESCALE_256,
-        PRESCALE_1024,
-        EXTERNAL_FALLING,
-        EXTERNAL_RISING,
-    };
-
     static void (*Timer0CompareAInterrupt)(void) = nullptr;
     static void (*Timer1CompareAInterrupt)(void) = nullptr;
     static void (*Timer2CompareAInterrupt)(void) = nullptr;
 
-    class Atmega328Timer
+    class Atmega328Timer : public ITimer
     {
         public:
             /**
@@ -54,12 +39,22 @@ namespace Timer
              */
             void initialize();
 
-        private:
+            void setPeriodTics(uint16_t tics) override;
+            uint16_t microSecondsToTics(uint32_t microseconds) override;
+            void reset() override;
 
+            void enable() override;
+            void disable() override;
+            void setInterrupt(void (*interrupt)(void)) override;
+
+        private:
             Timer timer_;
             TimerMode mode_;
             TimerPrescaler prescaler_;
             uint16_t top_;
+            bool enabled_;
+
+            void setTop(uint16_t top);
             
             void setCompAInterrupt(Timer timer, void (*interrupt)(void));
             void enableCompAInterrupt(Timer timer);
