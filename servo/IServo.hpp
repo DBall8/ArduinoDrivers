@@ -5,18 +5,20 @@
 #include "drivers/dio/IDio.hpp"
 
 namespace Servo
-{
-    const static int16_t SERVO_MIN_ANGLE = 0;
-    const static int16_t SERVO_MAX_ANGLE = 180;
-    
+{    
     class IServo
     {
         public:
             IServo(Timer::ITimer* pTimer,
                    Dio::IDio* pPin,
                    uint16_t minPeriodMicroS,
-                   uint16_t maxPeriodMicroS);
+                   uint16_t maxPeriodMicroS,
+                   int16_t minAngle,
+                   int16_t maxAngle);
             ~IServo(){}
+
+            int16_t getMinAngle();
+            int16_t getMaxAngle();
 
             void enable();
             void disable();
@@ -34,6 +36,8 @@ namespace Servo
             uint16_t totalPeriodTics_;
             uint16_t minPeriodMicroS_;
             uint16_t maxPeriodMicroS_;
+            int16_t minAngle_;
+            int16_t maxAngle_;
 
             uint16_t angleToTics(int16_t angle);
     };

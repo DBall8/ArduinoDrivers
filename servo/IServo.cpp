@@ -35,11 +35,15 @@ namespace Servo
     IServo::IServo(Timer::ITimer* pTimer,
                    Dio::IDio* pPin,
                    uint16_t minPeriodMicroS,
-                   uint16_t maxPeriodMicroS):
+                   uint16_t maxPeriodMicroS,
+                   int16_t minAngle,
+                   int16_t maxAngle):
         pTimer_(pTimer),
         pPin_(pPin),
         minPeriodMicroS_(minPeriodMicroS),
-        maxPeriodMicroS_(maxPeriodMicroS)
+        maxPeriodMicroS_(maxPeriodMicroS),
+        minAngle_(minAngle),
+        maxAngle_(maxAngle)
     {
         pPin_->set(Level::L_LOW);
         pTimer_->disable();
@@ -51,6 +55,16 @@ namespace Servo
 
         ServoInstances[0].isHigh = false;
         ServoInstances[0].pServo = this;
+    }
+
+    int16_t IServo::getMinAngle()
+    {
+        return minAngle_;
+    }
+
+    int16_t IServo::getMaxAngle()
+    {
+        return maxAngle_;
     }
 
     void IServo::enable()
@@ -66,8 +80,8 @@ namespace Servo
 
     void IServo::setAngle(int16_t angle)
     {
-        if (angle > SERVO_MAX_ANGLE) angle = SERVO_MAX_ANGLE;
-        if (angle < SERVO_MIN_ANGLE) angle = SERVO_MIN_ANGLE;
+        if (angle > maxAngle_) angle = maxAngle_;
+        if (angle < minAngle_) angle = minAngle_;
 
         currAngle_ = angle;
         onPeriodTics_ = angleToTics(angle);
@@ -75,7 +89,7 @@ namespace Servo
 
     uint16_t IServo::angleToTics(int16_t angle)
     {
-        uint32_t perdioMicroS = (((uint32_t)angle * (maxPeriodMicroS_ - minPeriodMicroS_)) / SERVO_MAX_ANGLE) + minPeriodMicroS_;
+        uint32_t perdioMicroS = (((uint32_t)angle * (maxPeriodMicroS_ - minPeriodMicroS_)) / maxAngle_) + minPeriodMicroS_;
         return pTimer_->microSecondsToTics(perdioMicroS);
     }
 
