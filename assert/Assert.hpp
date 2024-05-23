@@ -28,4 +28,10 @@ static void assertCustom(bool val, const char* text = nullptr)
         // Infinite loop
     }
 }
+
+static void assert(bool val, const char* text = nullptr)
+{
+    assertCustom(val, text);
+}
+
 #endif

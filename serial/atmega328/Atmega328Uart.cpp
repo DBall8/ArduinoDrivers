@@ -19,7 +19,7 @@ namespace SerialComm
                                  uint32_t fCpu,
                                  bool enableParity,
                                  bool polarity,
-                                 Timer::SoftwareTimer* pTimeoutTimer = nullptr):
+                                 Timer::SoftwareTimer* pTimeoutTimer):
         baudRate_(baudRate),
         fCpu_(fCpu),
         enableParity_(enableParity),

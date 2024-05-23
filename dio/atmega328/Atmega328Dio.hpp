@@ -16,9 +16,9 @@ namespace Dio
 
     enum class Port: uint8_t
     {
-        B,
-        C,
-        D
+        B = 0,
+        C = 1,
+        D = 2
     };
 
     // Number of pins per port
@@ -90,8 +90,8 @@ namespace Dio
             void disableInterrupt() override;
 
         private:
-            Port port_;
-            uint8_t pin_;
+            volatile Port port_;
+            volatile uint8_t pin_;
             Mode mode_;
             bool inverted_;
 

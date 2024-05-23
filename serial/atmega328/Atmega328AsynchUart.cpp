@@ -7,7 +7,7 @@ using namespace Interrupt;
 namespace SerialComm
 {
 
-    const static char* BUFF_FULL_STR = "\r\nTX BUFF FULL\r\n";
+    const static char* BUFF_FULL_STR = "\r\nTX OVF\r\n";
     const static uint8_t BUFF_FULL_LEN = 16;
 
     CircularQueue<uint8_t>* Atmega328AsynchUart::pTxBuffer_ = nullptr;

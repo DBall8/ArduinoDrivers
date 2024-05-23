@@ -48,7 +48,7 @@ namespace Dio
 
     // Static array of function pointers to handle PCINTs for each port
     const static uint8_t NUM_PCINT_PORTS = 3;
-    static void (*pcintPortCallbacks[NUM_PCINT_PORTS])() = { nullptr, nullptr, nullptr};
+    static void (*pcintPortCallbacks[NUM_PCINT_PORTS])() = { nullptr };
 
     // Interrupt handler for port B pin changes
     ISR(PCINT0_vect)
@@ -156,13 +156,14 @@ namespace Dio
 
     Level Atmega328Dio::read()
     {
-        bool value = *PIN_REGS[static_cast<uint8_t>(port_)] & (0x01 << pin_);
-        return value ? Level::L_HIGH : Level::L_LOW;
+        uint8_t regVal = *PIN_REGS[static_cast<uint8_t>(port_)];
+        uint8_t pinVal = regVal & (0x01 << pin_);
+        return (pinVal > 0) ? Level::L_HIGH : Level::L_LOW;
     }
 
     void Atmega328Dio::setDirection(Mode mode)
     {
-        if (mode  == INPUT)
+        if (mode == INPUT)
         {
             *DIRECION_REGS[static_cast<uint8_t>(port_)] &= ~(0x01 << pin_);
         }

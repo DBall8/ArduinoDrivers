@@ -26,7 +26,7 @@ namespace SerialComm
 
     const static uint8_t MAX_NUM_SOFT_SERIAL = 4;   // Max number of software serials that are supported at one time
     static uint8_t numActiveSerialConns = 0;        // Number of running software serials
-    static Atmega328SoftwareSerial* activeSerialConns[MAX_NUM_SOFT_SERIAL]; // List of active software serial objects
+    static Atmega328SoftwareSerial* activeSerialConns[MAX_NUM_SOFT_SERIAL] = { nullptr }; // List of active software serial objects
 
     Atmega328SoftwareSerial::Atmega328SoftwareSerial(Dio::IDio* pRxPin,
                                                      Dio::IDio* pTxPin,
@@ -128,14 +128,14 @@ namespace SerialComm
         // Update data available flag
         dataAvailable_ = !rxBuffer_.isEmpty();
 
-        // Notify if an rx overflow event occurred
-        if (rxOverflow_)
-        {
-            PRINTLN("SS Overflow");
-            rxOverflow_ = false;
-        }
-
         return bytesRead;
+    }
+
+    bool Atmega328SoftwareSerial::checkRxOverflow()
+    {
+        bool result = rxOverflow_;
+        rxOverflow_ = false;
+        return result;
     }
 
     void Atmega328SoftwareSerial::flush()
@@ -173,6 +173,8 @@ namespace SerialComm
 
     void Atmega328SoftwareSerial::receiveByte()
     {
+        if (pRxPin_ == nullptr) return;
+
         uint8_t data = 0;
 
         // Start timing critical zone
@@ -185,13 +187,16 @@ namespace SerialComm
         // LSB to MSB
         for (uint8_t i=0; i<8; i++)
         {
-            data >>= 1;
-            data |= ((uint8_t)pRxPin_->read()) << 7; // Shift 7 to place at MSB, which will then be shifted as we read
+            if (pRxPin_->read() == L_HIGH)
+            {
+                data |= 0x01 << i;
+            }
+            // data |= ((uint8_t)pRxPin_->read()) << 7; // Shift 7 to place at MSB, which will then be shifted as we read
 
             accurateDelay(rxInterBitQuadCycles_);
         }
 
-        // Do not save byte if our buffer is full, but instead set overflow flag
+        // // Do not save byte if our buffer is full, but instead set overflow flag
         if (rxBuffer_.isFull())
         {
             rxOverflow_ = true;
@@ -217,6 +222,8 @@ namespace SerialComm
         {
             // Find the serial whose RX pin is low, indicating a start bit
             Atmega328SoftwareSerial* pSerial = activeSerialConns[i];
+            if (pSerial == nullptr) continue;
+
             if (pSerial->pRxPin_->read() == L_LOW)
             {
                 pSerial->receiveByte();

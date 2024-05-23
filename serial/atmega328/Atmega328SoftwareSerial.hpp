@@ -69,6 +69,12 @@ namespace SerialComm
              */
             void flush();
 
+            /**
+             * Check if there has been an RX overflow, and clear it
+             * @return True if there has been an overflow
+            */
+            bool checkRxOverflow();
+
         private:
             CircularQueue<uint8_t> rxBuffer_;   // Circular queue for receiving data
 
