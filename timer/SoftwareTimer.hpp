@@ -15,7 +15,7 @@ namespace Timer{
                           Watchdog::IWatchdog* pWdt = nullptr);
             ~SoftwareTimer();
 
-            void enable();
+            virtual void enable();
             void disable();
             void reset();
 
