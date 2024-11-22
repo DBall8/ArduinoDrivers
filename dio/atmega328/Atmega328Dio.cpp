@@ -161,6 +161,31 @@ namespace Dio
         return (pinVal > 0) ? Level::L_HIGH : Level::L_LOW;
     }
 
+    void Atmega328Dio::setOutputMode(Level level)
+    {
+        // Enter mode transition to allow pin mode to change safely
+        enterModeTransition();
+        setDirection(Mode::OUTPUT);
+        set(level);
+    }
+
+    void Atmega328Dio::setInputMode(bool usePullup)
+    {
+        // Enter mode transition to allow pin mode to change safely
+        enterModeTransition();
+        // When set as input, PORT register is used to designate pullup
+        // HIGH = pullup
+        // LOW = no pullup
+        setDirection(Mode::INPUT);
+        set(usePullup ? L_HIGH : L_LOW);
+    }
+
+    void Atmega328Dio::enterModeTransition()
+    {
+        *PORT_REGS[static_cast<uint8_t>(port_)] &= ~(0x01 << pin_);
+        *DIRECION_REGS[static_cast<uint8_t>(port_)] &= ~(0x01 << pin_);
+    }
+
     void Atmega328Dio::setDirection(Mode mode)
     {
         if (mode == INPUT)
@@ -175,6 +200,8 @@ namespace Dio
         {
             assert(false);
         }
+
+        mode_ = mode;
     }
 
     uint8_t Atmega328Dio::getPcintNumber(Port port, uint8_t pin)

@@ -8,12 +8,6 @@
 
 namespace Dio
 {
-    enum Mode: uint8_t
-    {
-        INPUT = 0,
-        OUTPUT
-    };
-
     enum class Port: uint8_t
     {
         B = 0,
@@ -77,6 +71,18 @@ namespace Dio
             Level read() override;
 
             /**
+             * Change the pin into an output pin
+             * @param level Level to start outputing
+             */
+            void setOutputMode(Level level) override;
+
+            /**
+             * Change the pin into an input pin
+             * @param usePullup If true, enable an internal pullup resistor
+             */
+            void setInputMode(bool usePullup) override;
+
+            /**
              * Enable pin change interrupts for this pin
              * IMPORTANT: Currently only one interrupt handler can be set per PORT
              * Any logic to differentiate between different pins must be inside the interrupt handler
@@ -101,6 +107,7 @@ namespace Dio
              * @param   mode    The mode to set the pin to
              */
             void setDirection(Mode mode);
+            void enterModeTransition();
 
             static uint8_t getPcintNumber(Port port, uint8_t pin);
     };
