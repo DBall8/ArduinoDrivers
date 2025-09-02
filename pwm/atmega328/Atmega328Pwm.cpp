@@ -24,7 +24,9 @@ namespace Pwm
                                PwmMode mode,
                                PwmResolution resolution):
         pPwmInfo_(nullptr),
-        resolution_(resolution)
+        resolution_(resolution),
+        dutyCycle_(0),
+        enabled_(false)
     {
         // Look at the PWM pins to find the one that matches the inputs
         for (uint8_t i=0; i<NUM_PWM_MAPPINGS; i++)
@@ -46,7 +48,7 @@ namespace Pwm
 
         if (pPwmInfo_->timer == Timer::TIMER_0)
         {
-            uint8_t regA = 0;
+            uint8_t regA = TCCR0A;
             uint8_t regB = 0;
             
             regB = (1 << CS00); // No prescaler for maximum frequency
@@ -74,7 +76,7 @@ namespace Pwm
         }
         else if (pPwmInfo_->timer == Timer::TIMER_1)
         {
-            uint8_t regA = 0;
+            uint8_t regA = TCCR1A;
             uint8_t regB = 0;
             
             regB = (1 << CS10) | // No prescaler for maximum frequency
@@ -96,10 +98,12 @@ namespace Pwm
             if (pPwmInfo_->channel == PwmChannel::CHANNEL_A)
             {
                 regA |= (1 << COM1A1);  // Non-inverted channel A 
+                regA &= ~(1 << COM1A0);
             }
             else
             {
                 regA |= (1 << COM1B1);   // Non-inverted channel B 
+                regA &= ~(1 << COM1B0);
             }
 
             TCCR1A = regA;
@@ -107,7 +111,7 @@ namespace Pwm
         }
         else if (pPwmInfo_->timer == Timer::TIMER_2)
         {
-            uint8_t regA = 0;
+            uint8_t regA = TCCR2A;
             uint8_t regB = 0;
             
             regB = (1 << CS20); // No prescaler for maximum frequency
@@ -142,30 +146,73 @@ namespace Pwm
 
     void Atmega328Pwm::enable()
     {
-
+        enabled_ = true;
+        setDutyBinary(dutyCycle_);
     }
 
     void Atmega328Pwm::disable()
     {
+        uint16_t currentDutyCycle = dutyCycle_;
+        setDutyBinary(0);
+        dutyCycle_ = currentDutyCycle;
 
+        enabled_ = false;
     }
 
     void Atmega328Pwm::setDutyCycle(float percentDuty)
     {
         uint16_t dutyCycle = (uint16_t)resolution_ * percentDuty / 100;
+        dutyCycle_ = dutyCycle;
+        if (!enabled_) return;
+
+        setDutyBinary(dutyCycle);
+    }
+
+    uint16_t Atmega328Pwm::getResolution()
+    {
+        return (uint16_t)resolution_;
+    }
+
+    void Atmega328Pwm::setDutyBinary(uint16_t dutyBinary)
+    {
+        dutyCycle_ = dutyBinary;
+        if (!enabled_) return;
 
         if (pPwmInfo_->timer == Timer::TIMER_0)
         {
-            OCR0A = (uint8_t)percentDuty;
+            if (pPwmInfo_->channel == PwmChannel::CHANNEL_A)
+            {
+                OCR0A = (uint8_t)dutyCycle_;
+            }
+            else if (pPwmInfo_->channel == PwmChannel::CHANNEL_B)
+            {
+                OCR0B = (uint8_t)dutyCycle_;
+            }
         }
         else if (pPwmInfo_->timer == Timer::TIMER_1)
         {
-            OCR1AH = (uint8_t)(dutyCycle >> 8);
-            OCR1AL = (uint8_t)(dutyCycle);
+            if (pPwmInfo_->channel == PwmChannel::CHANNEL_A)
+            {
+                OCR1AH = (uint8_t)(dutyCycle_ >> 8);
+                OCR1AL = (uint8_t)(dutyCycle_);
+            }
+            else if (pPwmInfo_->channel == PwmChannel::CHANNEL_B)
+            {
+                OCR1BH = (uint8_t)(dutyCycle_ >> 8);
+                OCR1BL = (uint8_t)(dutyCycle_);
+            }
+            
         }
         else if (pPwmInfo_->timer == Timer::TIMER_2)
         {
-            OCR2A = (uint8_t)percentDuty;
+            if (pPwmInfo_->channel == PwmChannel::CHANNEL_A)
+            {
+                OCR2A = (uint8_t)dutyCycle_;
+            }
+            else if (pPwmInfo_->channel == PwmChannel::CHANNEL_B)
+            {
+                OCR2B = (uint8_t)dutyCycle_;
+            }
         }
     }
 }

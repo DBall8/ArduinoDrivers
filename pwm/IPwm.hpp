@@ -12,6 +12,9 @@ namespace Pwm
             virtual void disable() = 0;
 
             virtual void setDutyCycle(float percentDuty) = 0;
+
+            virtual uint16_t getResolution(){return 0;}
+            virtual void setDutyBinary(uint16_t dutyBinary){}
     };
 }
 

@@ -50,9 +50,14 @@ namespace Pwm
 
             void setDutyCycle(float percentDuty) override;
 
+            uint16_t getResolution() override;
+            void setDutyBinary(uint16_t dutyBinary) override;
+
         private:
             const PwmMapping* pPwmInfo_;
             PwmResolution resolution_;
+            uint16_t dutyCycle_;
+            bool enabled_;
     };
 }
 
