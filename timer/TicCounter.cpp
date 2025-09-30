@@ -9,7 +9,7 @@ namespace Tic{
      
     TicCounter::~TicCounter(){}
 
-    volatile uint32_t TicCounter::getTicCount(){
+    uint32_t TicCounter::getTicCount(){
         return ticCount_;
     }
 

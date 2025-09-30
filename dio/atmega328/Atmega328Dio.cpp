@@ -6,6 +6,9 @@
 
 namespace Dio
 {
+    // Number of pins per port
+    const static uint8_t NUM_PINS_PER_PORT = 8;
+
     // PORT registers
     static volatile uint8_t* PORT_REGS[] = 
     {
@@ -88,7 +91,7 @@ namespace Dio
         mode_(mode),
         inverted_(inverted)
     {
-        assert(pin_ < NUM_PINS);
+        assert(pin_ < NUM_PINS_PER_PORT);
 
         if (mode_ == INPUT)
         {

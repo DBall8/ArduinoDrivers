@@ -16,7 +16,7 @@ namespace Servo
     };
 
     const static uint8_t MAX_NUM_SERVOS = 1;
-    static ServoInstance ServoInstances[MAX_NUM_SERVOS] = {0};
+    static ServoInstance ServoInstances[MAX_NUM_SERVOS] = {0, 0};
 
     static void servoHandleInt()
     {

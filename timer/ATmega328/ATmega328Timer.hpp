@@ -16,10 +16,6 @@ namespace Timer
         CTC,                // Clear Timer on Capture
     };
 
-    static void (*Timer0CompareAInterrupt)(void) = nullptr;
-    static void (*Timer1CompareAInterrupt)(void) = nullptr;
-    static void (*Timer2CompareAInterrupt)(void) = nullptr;
-
     class Atmega328Timer : public ITimer
     {
         public:
@@ -27,7 +23,7 @@ namespace Timer
              * Frequency_target = F_CPU / (Prescaler * (Top+1))
              *
              * @param   timer       The timer to use, Timer1 is 16bit, Timers0 and 2 are 8-bit
-             * @param   mode        Normal counting or clear on top match (reset to 0 at top or wait for rollover)
+             * @param   mode        Normal counting or clear on top match (wait for rollover or reset to 0 at top)
              * @param   prescale    Used in frequency target calculation
              * @param   top         Trigger interrupt when the timer counts to this value
              * @param   interrupt   Interrupt to call on compare match

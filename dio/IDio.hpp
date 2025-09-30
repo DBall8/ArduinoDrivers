@@ -31,7 +31,7 @@ namespace Dio
             virtual void setOutputMode(Level level) = 0;
             virtual void setInputMode(bool usePullup) = 0;
 
-            virtual void enableInterrupt(void (*pIntHandler)(void) = nullptr) {}
+            virtual void enableInterrupt(void (*pIntHandler)(void) = nullptr) {(void)pIntHandler;}
             virtual void disableInterrupt() {}
     };
 }

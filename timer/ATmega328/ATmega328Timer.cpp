@@ -72,6 +72,10 @@ namespace Timer{
         [EXTERNAL_RISING] = 0,
     };
 
+    static void (*Timer0CompareAInterrupt)(void) = nullptr;
+    static void (*Timer1CompareAInterrupt)(void) = nullptr;
+    static void (*Timer2CompareAInterrupt)(void) = nullptr;
+
     Atmega328Timer::Atmega328Timer(Timer timer,
                                    TimerMode mode,
                                    TimerPrescaler prescaler,
@@ -182,6 +186,7 @@ namespace Timer{
 
                 // Set the compare A top value (16 bit)
                 OCR1A = top_;
+                break;
             }
 
             default:

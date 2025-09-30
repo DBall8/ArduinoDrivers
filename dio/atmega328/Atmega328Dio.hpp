@@ -15,9 +15,6 @@ namespace Dio
         D = 2
     };
 
-    // Number of pins per port
-    const static uint8_t NUM_PINS = 8;
-
     class Atmega328Dio: public IDio
     {
         public:

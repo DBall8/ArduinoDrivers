@@ -11,7 +11,7 @@ namespace Tic{
             TicCounter(uint32_t ticsPerSecond);
             ~TicCounter();
 
-            volatile uint32_t getTicCount();
+            uint32_t getTicCount();
             void incrementTicCount();
             uint32_t getTicsPerSecond() { return ticsPerSecond_; }
             uint32_t secondsToTics(uint32_t seconds);
